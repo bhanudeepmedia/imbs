@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Login — IMBS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Design tokens (matches styles.css) ── */
+    :root {
+      --navy:       #1C2F6E;
+      --deep-navy:  #111D4A;
+      --muted-navy: #2A3F7E;
+      --red:        #C8102E;
+      --red-hover:  #A00D24;
+      --white:      #FFFFFF;
+      --off-white:  #F4F4F0;
+      --light-grey: #E8E8E8;
+      --text-dark:  #333333;
+      --text-muted: #6B7A99;
+      --font-display: 'Playfair Display', serif;
+      --font-heading: 'Barlow Condensed', sans-serif;
+      --font-body:    'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--off-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Split layout ── */
+    .login-wrapper {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+
+    /* Left panel — brand */
+    .brand-panel {
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 64px 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 10% 110%, rgba(200,16,46,0.25) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% -10%, rgba(42,63,126,0.6) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .brand-panel-content { position: relative; z-index: 1; }
+
+    .brand-logo {
+      height: 72px;
+      margin-bottom: 56px;
+    }
+
+    .brand-headline {
+      font-family: var(--font-display);
+      font-size: 42px;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .brand-sub {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+      max-width: 340px;
+      margin-bottom: 48px;
+    }
+
+    .brand-badges {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .badge-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255,255,255,0.8);
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      flex-shrink: 0;
+    }
+
+    /* Right panel — form */
+    .form-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 64px 72px;
+      background: var(--white);
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .form-overline {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 12px;
+    }
+
+    .form-title {
+      font-family: var(--font-heading);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    /* Form fields */
+    .field {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      height: 52px;
+      padding: 0 16px;
+      border: 1.5px solid var(--light-grey);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-dark);
+      background: var(--off-white);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: var(--navy);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(28,47,110,0.1);
+    }
+
+    input.error {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(200,16,46,0.1);
+    }
+
+    .field-error {
+      font-size: 12px;
+      color: var(--red);
+      margin-top: 6px;
+      display: none;
+    }
+
+    .field-error.visible { display: block; }
+
+    /* Password wrapper */
+    .input-wrapper {
+      position: relative;
+    }
+
+    .toggle-pwd {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .toggle-pwd:hover { color: var(--navy); }
+
+    /* Row: remember + forgot */
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-dark);
+      user-select: none;
+    }
+
+    .remember input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--navy);
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      font-size: 13px;
+      color: var(--red);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .forgot-link:hover { color: var(--red-hover); }
+
+    /* Submit */
+    .btn-login {
+      width: 100%;
+      height: 52px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-login::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      left: -100%;
+      width: 60%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-login:hover {
+      background: var(--muted-navy);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(28,47,110,0.35);
+    }
+
+    .btn-login:hover::after { left: 150%; }
+    .btn-login:active { transform: translateY(0); }
+
+    /* Global error banner */
+    .login-error-banner {
+      background: rgba(200,16,46,0.08);
+      border: 1px solid rgba(200,16,46,0.25);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--red);
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .login-error-banner.visible { display: block; }
+
+    .form-footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .form-footer a {
+      color: var(--navy);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .form-footer a:hover { color: var(--red); }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 28px 0;
+      color: var(--text-muted);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--light-grey);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .login-wrapper { grid-template-columns: 1fr; }
+      .brand-panel { display: none; }
+      .form-panel { padding: 48px 32px; min-height: 100vh; }
+      .form-box { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+
+  <!-- Left: Brand Panel -->
+  <div class="brand-panel">
+    <div class="brand-panel-content">
+      <img src="Logo Warm Theme.png" alt="IMBS Logo" class="brand-logo">
+
+      <h1 class="brand-headline">Welcome back to your<br>learning journey.</h1>
+      <p class="brand-sub">Access your enrolled programs, track your progress, and manage your fees — all in one secure portal.</p>
+
+      <div class="brand-badges">
+        <div class="badge-item"><span class="badge-dot"></span>Internationally Accredited Programs</div>
+        <div class="badge-item"><span class="badge-dot"></span>Flexible 100% Online Study</div>
+        <div class="badge-item"><span class="badge-dot"></span>Secure Student Portal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Login Form -->
+  <div class="form-panel">
+    <div class="form-box">
+
+      <p class="form-overline">Student Portal</p>
+      <h2 class="form-title">Sign In</h2>
+      <p class="form-subtitle">Enter your registered email and password to access your dashboard.</p>
+
+      <div class="login-error-banner" id="errorBanner">
+        Incorrect email or password. Please try again.
+      </div>
+
+      <form id="loginForm" novalidate>
+
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email">
+          <p class="field-error" id="emailError">Please enter a valid email address.</p>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="toggle-pwd" id="togglePwd" aria-label="Toggle password visibility">
+              <!-- Eye icon -->
+              <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" style="display:none">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 012.222-4.085M6.3 6.3A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.972 9.972 0 01-4.423 5.568M3 3l18 18"/>
+              </svg>
+            </button>
+          </div>
+          <p class="field-error" id="passwordError">Password must be at least 6 characters.</p>
+        </div>
+
+        <div class="form-row">
+          <label class="remember">
+            <input type="checkbox" id="remember"> Remember me
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-login">Sign In to Portal</button>
+
+      </form>
+
+      <div class="divider">or</div>
+
+      <div class="form-footer">
+        Not yet enrolled? <a href="admissions.html">Apply for admission</a>
+      </div>
+      <div class="form-footer" style="margin-top:10px">
+        <a href="index.html">&larr; Back to IMBS website</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ── Toggle password visibility ── */
+  const pwdInput  = document.getElementById('password');
+  const toggleBtn = document.getElementById('togglePwd');
+  const eyeOpen   = document.getElementById('eyeOpen');
+  const eyeClosed = document.getElementById('eyeClosed');
+
+  toggleBtn.addEventListener('click', () => {
+    const isText = pwdInput.type === 'text';
+    pwdInput.type = isText ? 'password' : 'text';
+    eyeOpen.style.display   = isText ? 'block' : 'none';
+    eyeClosed.style.display = isText ? 'none'  : 'block';
+  });
+
+  /* ── Form validation ── */
+  const form          = document.getElementById('loginForm');
+  const emailInput    = document.getElementById('email');
+  const emailError    = document.getElementById('emailError');
+  const passwordError = document.getElementById('passwordError');
+  const errorBanner   = document.getElementById('errorBanner');
+
+  function validateEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+  }
+
+  function setError(input, errorEl, show) {
+    input.classList.toggle('error', show);
+    errorEl.classList.toggle('visible', show);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBanner.classList.remove('visible');
+
+    const emailVal = emailInput.value.trim();
+    const pwdVal   = pwdInput.value;
+
+    let valid = true;
+
+    if (!validateEmail(emailVal)) {
+      setError(emailInput, emailError, true);
+      valid = false;
+    } else {
+      setError(emailInput, emailError, false);
+    }
+
+    if (pwdVal.length < 6) {
+      setError(pwdInput, passwordError, true);
+      valid = false;
+    } else {
+      setError(pwdInput, passwordError, false);
+    }
+
+    if (!valid) return;
+
+    const loginBtn = form.querySelector('.btn-login');
+    const originalText = loginBtn.textContent;
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Signing In...';
+
+    try {
+      const res = await fetch('api.php?action=student_login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailVal, password: pwdVal })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        localStorage.setItem('student_token', data.token);
+        localStorage.setItem('student_info', JSON.stringify(data.student));
+        window.location.href = 'dashboard.html';
+      } else {
+        errorBanner.textContent = data.error || 'Incorrect email or password. Please try again.';
+        errorBanner.classList.add('visible');
+      }
+    } catch (err) {
+      console.error(err);
+      errorBanner.textContent = 'Server connection error. Please make sure the server is running.';
+      errorBanner.classList.add('visible');
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = originalText;
+    }
+  });
+
+  /* Clear errors on input */
+  emailInput.addEventListener('input', () => setError(emailInput, emailError, false));
+  pwdInput.addEventListener('input',   () => setError(pwdInput, passwordError, false));
+</script>
+</body>
+</html>

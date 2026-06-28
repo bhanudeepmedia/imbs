@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <link rel="icon" type="image/png" href="IMBS Only Pic Logo.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="IMBS delivers internationally accredited online programs designed for working professionals. Advance your career on your schedule from anywhere in the world.">
-  <title>IMBS - Institute of Management and Business Studies | Online Programs</title>
+  <meta name="description" content="Learn about IMBS — Institute of Management and Business Studies. Our mission, values, and why thousands of working professionals choose us for globally recognized online education.">
+  <title>About IMBS - Institute of Management and Business Studies</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-  
+
   <!-- Lenis CSS for smooth scrolling scrollbar styling -->
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="styles.css?v=11">
+  <link rel="stylesheet" href="styles.css?v=6">
 
   <!-- GSAP & Lenis Smooth Scroll -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -31,18 +31,15 @@
        ========================================================================== -->
   <nav class="navbar theme-warm" id="navbar">
     <div class="nav-container">
-      <!-- Left: Logo -->
       <a href="index.html" class="nav-logo" id="nav-logo" aria-label="IMBS Home">
         <img src="Logo Warm Theme.png" alt="IMBS Logo" class="nav-logo-img">
       </a>
 
-      <!-- Center: Menu Links -->
       <ul class="nav-menu">
-        <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+        <li class="nav-item nav-item--active"><a href="about.html" class="nav-link">About</a></li>
         <li class="nav-item"><a href="accreditations.html" class="nav-link">Recognition</a></li>
         <li class="nav-item nav-item-dropdown">
-          <a href="#programs" class="nav-link">Programs <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-          <!-- Mega Menu Dropdown -->
+          <a href="index.html#programs" class="nav-link">Programs <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
           <div class="mega-menu" id="dynamic-mega-menu"></div>
         </li>
         <li class="nav-item"><a href="admissions.html" class="nav-link">Admissions</a></li>
@@ -50,7 +47,6 @@
         <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
       </ul>
 
-      <!-- Right: Buttons -->
       <div class="nav-actions">
         <button class="btn btn-outline-white trigger-brochure-modal">Download Brochure</button>
         <a href="#contact-footer" class="btn btn-primary-red">Talk to an Advisor</a>
@@ -64,7 +60,6 @@
         </a>
       </div>
 
-      <!-- Hamburger Button (Mobile) -->
       <button class="hamburger" id="hamburger" aria-label="Toggle Navigation Menu">
         <span></span>
         <span></span>
@@ -92,128 +87,57 @@
 
 
   <!-- ==========================================================================
-       SECTION 1 - HERO
+       PAGE HERO — About IMBS
        ========================================================================== -->
-  <section class="hero" id="hero">
-    <!-- Video Background -->
-    <video class="hero-video" autoplay loop muted playsinline>
-      <source src="IMBS Hero Vid 1.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <!-- Video Overlay Shade -->
-    <div class="hero-video-overlay"></div>
-
-    <!-- Particle canvas overlay -->
-    <canvas class="hero-canvas" id="hero-canvas"></canvas>
-    <div class="hero-circle"></div>
-
-    <div class="container hero-grid">
-      <!-- Left content (now centered full-width) -->
-      <div class="hero-left">
-        <span class="overline-label hero-overline" id="hero-overline">Internationally Accredited · 100% Online</span>
-        <h1 class="hero-h1 hero-title" id="hero-title">
-          <span class="word" style="display:inline-block; overflow:hidden;">Your</span>
-          <span class="word" style="display:inline-block; overflow:hidden;">Career</span>
-          <span class="word" style="display:inline-block; overflow:hidden;">Doesn't</span>
-          <span class="word" style="display:inline-block; overflow:hidden;">Stop.</span>
-          <span class="word" style="display:inline-block; overflow:hidden;">Neither</span>
-          <span class="word" style="display:inline-block; overflow:hidden;">Should</span>
-          <span class="word" style="display:inline-block; overflow:hidden;">Your</span>
-          <span class="word" style="display:inline-block; overflow:hidden;">Education.</span>
-        </h1>
-        <p class="hero-subheading hero-subtext" id="hero-desc">
-          IMBS delivers globally recognized programs designed for working professionals. Advance your career on your schedule — from anywhere in the world.
+  <section class="page-hero" id="page-hero">
+    <div class="container">
+      <div class="page-hero-content">
+        <span class="page-hero-overline">Our Story</span>
+        <h1 class="page-hero-title">The School That<br>Fits Your Life</h1>
+        <p class="page-hero-desc">
+          IMBS was founded on a single conviction: <strong>education shouldn't pause your life</strong>. We build globally recognized programs around working professionals — not the other way around.
         </p>
-        <div class="hero-ctas" id="hero-actions">
-          <a href="#programs" class="btn btn-primary-red">Explore Programs</a>
-          <button class="btn btn-outline-white trigger-brochure-modal">Download Brochure</button>
-        </div>
-
-        <!-- Glassmorphic Stats Row -->
-        <div class="hero-stats-row" id="hero-stats-row">
-          <div class="hero-stat-item">
-            <span class="hero-stat-val">250+</span>
-            <span class="hero-stat-lbl">Programs Available</span>
-          </div>
-          <div class="hero-stat-item">
-            <span class="hero-stat-val">15+</span>
-            <span class="hero-stat-lbl">Years of Experience</span>
-          </div>
-          <div class="hero-stat-item">
-            <span class="hero-stat-val">Global</span>
-            <span class="hero-stat-lbl">Accreditations</span>
-          </div>
-        </div>
       </div>
     </div>
-
-  </section> <!-- End of Hero Section -->
-
-  <!-- Logo Ticker is now a separate block below the Hero -->
-  <div class="hero-marquee-wrapper hero-ticker" id="hero-ticker">
-    <div class="hero-marquee">
-      <div class="marquee-content">
-        <span class="marquee-item">Doctorate</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">Post Graduate</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">Graduate</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">Diploma</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">ADVB Diploma</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">PG Diploma</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">MDP</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">Certificate</span>
-        <span class="marquee-separator">✦</span>
-      </div>
-      <!-- Duplicate content for infinite scrolling marquee -->
-      <div class="marquee-content" aria-hidden="true">
-        <span class="marquee-item">Doctorate</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">Post Graduate</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">Graduate</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">Diploma</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">ADVB Diploma</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">PG Diploma</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">MDP</span>
-        <span class="marquee-separator">✦</span>
-        <span class="marquee-item">Certificate</span>
-        <span class="marquee-separator">✦</span>
-      </div>
-    </div>
-  </div>
+  </section>
 
 
   <!-- ==========================================================================
-       SECTION 2 - STATS BAR
+       MISSION & PILLARS
        ========================================================================== -->
-  <section class="stats-bar" id="stats-bar">
+  <section class="about-mission" id="about-mission">
     <div class="container">
-      <div class="stats-grid">
-        <div class="stat-col">
-          <div class="stat-number" data-target="250" data-suffix="+">0</div>
-          <div class="stat-label">Programs Across All Levels</div>
+      <div class="about-mission-grid">
+        <!-- Left: Text -->
+        <div class="about-mission-left reveal-up">
+          <span class="about-mission-label">Who We Are</span>
+          <h2 class="about-mission-title">More Than a Business School</h2>
+          <p class="about-mission-body">
+            Institute of Management and Business Studies (IMBS) is a globally accredited online institution dedicated to empowering working professionals, career switchers, and ambitious learners with internationally recognized qualifications.
+          </p>
+          <p class="about-mission-body">
+            Over 15 years of curriculum expertise, built in collaboration with industry executives, backs every program we offer. From Doctorates to Certificates, our portfolio covers eight pathways and hundreds of specialisations — all delivered 100% online, on your schedule.
+          </p>
         </div>
-        <div class="stat-col">
-          <div class="stat-number" data-target="8" data-suffix="">0</div>
-          <div class="stat-label">Program Categories</div>
-        </div>
-        <div class="stat-col">
-          <div class="stat-number" data-target="15" data-suffix="+">0</div>
-          <div class="stat-label">Years of Industry Experience</div>
-        </div>
-        <div class="stat-col">
-          <div class="stat-number" data-text="Global">Global</div>
-          <div class="stat-label">Accreditations Across 4 Continents</div>
+
+        <!-- Right: Pillars -->
+        <div class="about-pillars reveal-up">
+          <div class="about-pillar">
+            <div class="about-pillar-title">Ignite</div>
+            <p class="about-pillar-body">We spark ambition in learners who thought higher education was out of reach — proving that geography, time, and circumstance are no longer barriers.</p>
+          </div>
+          <div class="about-pillar">
+            <div class="about-pillar-title">Inspire</div>
+            <p class="about-pillar-body">Through curriculum designed with real-world executives, we connect academic rigour with practical business intelligence that translates directly to career growth.</p>
+          </div>
+          <div class="about-pillar">
+            <div class="about-pillar-title">Innovate</div>
+            <p class="about-pillar-body">From our proprietary LMS platform (IMBSity) to rapid material dispatch, every touchpoint is engineered to eliminate friction and accelerate your progress.</p>
+          </div>
+          <div class="about-pillar">
+            <div class="about-pillar-title">Global</div>
+            <p class="about-pillar-body">Accredited by bodies across the US, UK, and India, our credentials are accepted by leading multinational corporations and recognised across 4 continents.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -221,7 +145,7 @@
 
 
   <!-- ==========================================================================
-       SECTION 3 - WHO IS IMBS FOR
+       WHO IS IMBS FOR
        ========================================================================== -->
   <section class="who-is-for who-section" id="who-is-for">
     <div class="container">
@@ -281,124 +205,7 @@
 
 
   <!-- ==========================================================================
-       SECTION 4 - PROGRAMS EXPLORER
-       ========================================================================== -->
-  <section class="programs-explorer" id="programs">
-    <div class="container programs-tabs-container">
-      
-      <div class="programs-explorer-header">
-        <span class="overline-label reveal-up">Our Programs</span>
-        <h2 class="section-title-dark reveal-up">Eight Pathways. Hundreds of Specialisations.</h2>
-      </div>
-
-      <!-- Desktop View: Tabbed Switcher Layout -->
-      <div class="programs-tabs-layout">
-        <!-- Left Side: Tabs List -->
-        <div class="programs-tabs-list" id="programs-tabs-list"></div>
-        <!-- Right Side: Active Card Viewport -->
-        <div class="programs-tabs-content" id="programs-tabs-content"></div>
-      </div>
-
-      <!-- Mobile/Tablet View: Horizontal Swipe Carousel -->
-      <div class="mobile-carousel-viewport">
-        <div class="program-card-stack" id="dynamic-program-cards"></div>
-      </div>
-      <div class="mobile-carousel-controls">
-        <button class="carousel-prev" aria-label="Previous program">&#8592;</button>
-        <button class="carousel-next" aria-label="Next program">&#8594;</button>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- ==========================================================================
-       SECTION 5 - HOW IT WORKS
-       ========================================================================== -->
-  <section class="how-it-works how-it-works-section" id="how-it-works">
-    <div class="container">
-      <div style="text-align: center; margin-bottom: 60px;">
-        <span class="overline-label reveal-up">The Process</span>
-        <h2 class="section-title-white reveal-up">From Enrollment to Certification in 3 Steps</h2>
-      </div>
-
-      <div class="timeline-wrapper">
-        <!-- Dotted red line animated on scroll scrub -->
-        <div class="timeline-svg-container">
-          <svg class="steps-connector" viewBox="0 0 1000 20" preserveAspectRatio="none" style="width: 100%; height: 20px;">
-            <line x1="0" y1="10" x2="1000" y2="10"
-              stroke="#C8102E" stroke-width="2"
-              stroke-dasharray="8 6"
-              class="steps-line"/>
-          </svg>
-        </div>
-
-        <div class="timeline-steps">
-          <!-- Step 1 -->
-          <div class="step-block">
-            <span class="step-num-bg">01</span>
-            <h3 class="step-title">Apply Online</h3>
-            <p class="step-desc">
-              Fill out a simple application form with your professional background and academic credentials.
-            </p>
-          </div>
-
-          <!-- Step 2 -->
-          <div class="step-block">
-            <span class="step-num-bg">02</span>
-            <h3 class="step-title">Enroll & Pay</h3>
-            <p class="step-desc">
-              Choose your payment structure, complete the enrollment process, and receive your comprehensive study materials within 10 working days.
-            </p>
-          </div>
-
-          <!-- Step 3 -->
-          <div class="step-block">
-            <span class="step-num-bg">03</span>
-            <h3 class="step-title">Learn & Get Certified</h3>
-            <p class="step-desc">
-              Access coursework through our LMS (IMBSity) at your own pace, complete MCQ exams, and receive your globally recognized credentials.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ==========================================================================
-       SECTION 6 - ACCREDITATIONS
-       ========================================================================== -->
-  <section class="accreditations" id="accreditations">
-    <div class="container">
-      <div style="text-align: center; margin-bottom: 40px;">
-        <span class="overline-label reveal-up">Globally Recognized</span>
-        <h2 class="section-title-dark reveal-up">Accreditations That Open Doors Worldwide</h2>
-      </div>
-      
-      <p class="accred-subtext reveal-up">
-        IMBS programs are accredited by international bodies across the US, UK, India, and beyond — accepted by leading global companies including Microsoft, Google, and major BPOs.
-      </p>
-
-      <div class="accred-badges-strip reveal-up" id="accred-badges">
-        <div class="accred-pill">IASET 🇺🇸</div>
-        <div class="accred-pill">ACTIVE IQ 🇬🇧</div>
-        <div class="accred-pill">CODL 🇮🇳</div>
-        <div class="accred-pill">BAM 🇬🇧</div>
-        <div class="accred-pill">USNCHMS 🇺🇸</div>
-      </div>
-
-      <div class="accred-disclaimer reveal-up">
-        <p>
-          *IMBS programs follow international accreditation standards. These programs are not affiliated with UGC and are not eligible for Indian government employment. Ideal for private sector, global companies, and career advancement.
-        </p>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ==========================================================================
-       SECTION 7 - WHY IMBS
+       WHY CHOOSE US — Accordion
        ========================================================================== -->
   <section class="why-imbs" id="why-imbs">
     <div class="container why-imbs-grid">
@@ -410,11 +217,10 @@
 
       <!-- Right: Accordion -->
       <div class="accordion-list reveal-up">
-        <!-- Accordion 1 -->
         <div class="accordion-item active" id="acc-1">
           <div class="accordion-border"></div>
           <button class="accordion-header" aria-expanded="true" aria-controls="acc-body-1">
-            <span class="accordion-title">1. 100% Online & Flexible</span>
+            <span class="accordion-title">1. 100% Online &amp; Flexible</span>
             <span class="accordion-icon">+</span>
           </button>
           <div class="accordion-body-wrapper accordion-content" id="acc-body-1" style="max-height: 500px;">
@@ -424,7 +230,6 @@
           </div>
         </div>
 
-        <!-- Accordion 2 -->
         <div class="accordion-item" id="acc-2">
           <div class="accordion-border"></div>
           <button class="accordion-header" aria-expanded="false" aria-controls="acc-body-2">
@@ -438,7 +243,6 @@
           </div>
         </div>
 
-        <!-- Accordion 3 -->
         <div class="accordion-item" id="acc-3">
           <div class="accordion-border"></div>
           <button class="accordion-header" aria-expanded="false" aria-controls="acc-body-3">
@@ -452,7 +256,6 @@
           </div>
         </div>
 
-        <!-- Accordion 4 -->
         <div class="accordion-item" id="acc-4">
           <div class="accordion-border"></div>
           <button class="accordion-header" aria-expanded="false" aria-controls="acc-body-4">
@@ -471,7 +274,7 @@
 
 
   <!-- ==========================================================================
-       SECTION 8 - TESTIMONIALS
+       TESTIMONIALS
        ========================================================================== -->
   <section class="testimonials" id="testimonials">
     <div class="container">
@@ -492,9 +295,8 @@
 
       <div class="testimonials-slider-wrapper">
         <div class="testimonials-track" id="testimonials-track">
-          <!-- Card 1 -->
           <div class="testimonial-card">
-            <span class="quote-mark">“</span>
+            <span class="quote-mark">"</span>
             <p class="testimonial-quote">
               The flexibility allowed me to study for my MBA during transits and weekends. In less than 6 months after graduation, I transitioned into a Senior Director role at a top-tier consultancy.
             </p>
@@ -504,9 +306,8 @@
             </div>
           </div>
 
-          <!-- Card 2 -->
           <div class="testimonial-card">
-            <span class="quote-mark">“</span>
+            <span class="quote-mark">"</span>
             <p class="testimonial-quote">
               Transitioning fields was extremely challenging until I enrolled in IMBS. The curriculum was highly practical, and having accredited credentials made the job search globally viable.
             </p>
@@ -516,9 +317,8 @@
             </div>
           </div>
 
-          <!-- Card 3 -->
           <div class="testimonial-card">
-            <span class="quote-mark">“</span>
+            <span class="quote-mark">"</span>
             <p class="testimonial-quote">
               The DBA program provided the theoretical rigor I needed for my board appointments. The study materials arrived promptly in Dubai, and the LMS platform was extremely intuitive.
             </p>
@@ -528,9 +328,8 @@
             </div>
           </div>
 
-          <!-- Card 4 -->
           <div class="testimonial-card">
-            <span class="quote-mark">“</span>
+            <span class="quote-mark">"</span>
             <p class="testimonial-quote">
               As a full-time operations manager, traditional classes were impossible. IMBS let me study on my own schedule, leading directly to my promotion to APAC Regional Lead.
             </p>
@@ -546,80 +345,16 @@
 
 
   <!-- ==========================================================================
-       SECTION 9 - PARTNER UNIVERSITIES
-       ========================================================================== -->
-  <section class="partners" id="partners">
-    <div class="container">
-      <div style="text-align: center; margin-bottom: 40px;">
-        <span class="overline-label reveal-up">Our Ecosystem</span>
-        <h2 class="section-title-dark reveal-up">Partnered With Leading Institutions</h2>
-      </div>
-
-      <p class="partners-subtext reveal-up">
-        Through our university partnerships, students gain access to additional vocational and short-term programs — broadening opportunities beyond the IMBS core curriculum.
-      </p>
-
-      <!-- University marquee auto scroll -->
-      <div class="partners-marquee-wrapper reveal-up">
-        <div class="partners-marquee">
-          <div class="partners-marquee-content">
-            <div class="partner-logo-item">
-              <img src="Logos/Amity Logo.jpg" alt="Amity University" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/Amrita Logo.png" alt="Amrita University" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/DY Patil logo.png" alt="DY Patil University" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/Manipal Online.webp" alt="Manipal Online" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/VIT Logo.png" alt="VIT" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/nmims-university-logo.png" alt="NMIMS University" class="partner-logo-img">
-            </div>
-          </div>
-          <!-- Duplicate for infinite scrolling marquee -->
-          <div class="partners-marquee-content" aria-hidden="true">
-            <div class="partner-logo-item">
-              <img src="Logos/Amity Logo.jpg" alt="Amity University" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/Amrita Logo.png" alt="Amrita University" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/DY Patil logo.png" alt="DY Patil University" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/Manipal Online.webp" alt="Manipal Online" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/VIT Logo.png" alt="VIT" class="partner-logo-img">
-            </div>
-            <div class="partner-logo-item">
-              <img src="Logos/nmims-university-logo.png" alt="NMIMS University" class="partner-logo-img">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ==========================================================================
-       SECTION 10 - CTA BANNER
+       CTA BANNER
        ========================================================================== -->
   <section class="cta-banner" id="cta-banner">
     <div class="container">
-      <h2 class="cta-h2 reveal-up">Ready to Advance Your Career?</h2>
+      <h2 class="cta-h2 reveal-up">Ready to Write Your Next Chapter?</h2>
       <p class="cta-subtext reveal-up">
         Join professionals from across the globe who are upgrading their credentials without pausing their lives.
       </p>
       <div class="cta-buttons reveal-up">
-        <a href="#programs" class="btn btn-solid-white">Explore Programs</a>
+        <a href="index.html#programs" class="btn btn-solid-white">Explore Programs</a>
         <a href="#contact-footer" class="btn btn-outline-white">Talk to an Advisor</a>
       </div>
     </div>
@@ -627,12 +362,11 @@
 
 
   <!-- ==========================================================================
-       SECTION 11 - FOOTER
+       FOOTER
        ========================================================================== -->
   <footer class="footer watermark-bg" id="contact-footer">
     <div class="container">
       <div class="footer-grid">
-        <!-- Col 1 -->
         <div class="footer-col">
           <div class="footer-logo">
             <img src="IMBS Only Pic Logo.png" alt="IMBS Logo" class="logo-img" style="height: 80px; width: auto; display: block;">
@@ -651,22 +385,20 @@
           </div>
         </div>
 
-        <!-- Col 2 -->
         <div class="footer-col">
           <h3 class="footer-title">Programs</h3>
           <ul class="footer-links">
-            <li><a href="category.html?category=doctorate" class="footer-link" data-footer-tab="doctorate">Doctorate</a></li>
-            <li><a href="category.html?category=masters" class="footer-link" data-footer-tab="masters">Post Graduate</a></li>
-            <li><a href="category.html?category=graduation" class="footer-link" data-footer-tab="graduation">Graduate</a></li>
-            <li><a href="category.html?category=diploma" class="footer-link" data-footer-tab="diploma">Diploma</a></li>
-            <li><a href="category.html?category=adv-diploma" class="footer-link" data-footer-tab="adv-diploma">Adv. Diploma</a></li>
-            <li><a href="category.html?category=pg-diploma" class="footer-link" data-footer-tab="pg-diploma">PG Diploma</a></li>
-            <li><a href="category.html?category=mdp" class="footer-link" data-footer-tab="mdp">MDP</a></li>
-            <li><a href="category.html?category=certification" class="footer-link" data-footer-tab="certification">Certificate</a></li>
+            <li><a href="category.html?category=doctorate" class="footer-link">Doctorate</a></li>
+            <li><a href="category.html?category=masters" class="footer-link">Post Graduate</a></li>
+            <li><a href="category.html?category=graduation" class="footer-link">Graduate</a></li>
+            <li><a href="category.html?category=diploma" class="footer-link">Diploma</a></li>
+            <li><a href="category.html?category=adv-diploma" class="footer-link">Adv. Diploma</a></li>
+            <li><a href="category.html?category=pg-diploma" class="footer-link">PG Diploma</a></li>
+            <li><a href="category.html?category=mdp" class="footer-link">MDP</a></li>
+            <li><a href="category.html?category=certification" class="footer-link">Certificate</a></li>
           </ul>
         </div>
 
-        <!-- Col 3 -->
         <div class="footer-col">
           <h3 class="footer-title">Quick Links</h3>
           <ul class="footer-links">
@@ -675,12 +407,11 @@
             <li><a href="admissions.html" class="footer-link">Admissions Process</a></li>
             <li><a href="partners.html" class="footer-link">Partner Universities</a></li>
             <li><a href="blog.html" class="footer-link">Blog</a></li>
-            <li><a href="#accreditations" class="footer-link">UGC Disclaimer</a></li>
+            <li><a href="index.html#accreditations" class="footer-link">UGC Disclaimer</a></li>
             <li><a href="contact.html" class="footer-link">Contact Us</a></li>
           </ul>
         </div>
 
-        <!-- Col 4 -->
         <div class="footer-col">
           <h3 class="footer-title">Contact</h3>
           <div class="footer-contact-info">
@@ -696,7 +427,6 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               <span>Hyderabad, India</span>
             </div>
-            <!-- WhatsApp Green Button -->
             <a href="https://wa.me/[PLACEHOLDER]" target="_blank" rel="noopener" class="whatsapp-link">
               <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.72 14.12c-.24.69-1.44 1.35-1.98 1.41-.53.06-1.04.28-3.41-.65-2.85-1.12-4.68-4-4.82-4.19-.15-.19-1.18-1.58-1.18-3a3.16 3.16 0 0 1 .98-2.31c.28-.28.62-.35.83-.35.15 0 .31 0 .44.01.14.01.32-.05.5.38.19.46.65 1.58.71 1.71.06.13.1.28.01.46-.09.18-.18.3-.35.49-.17.19-.36.43-.52.58-.18.17-.37.36-.16.72.21.36.94 1.55 2.01 2.5 1.38 1.23 2.54 1.61 2.9 1.79.36.18.57.15.79-.1.21-.24.93-1.08 1.18-1.45.24-.37.49-.31.83-.18.34.13 2.16 1.02 2.53 1.2.37.18.62.27.71.43.09.16.09.93-.15 1.62z"/></svg>
               Chat on WhatsApp
@@ -706,7 +436,6 @@
         </div>
       </div>
 
-      <!-- Bottom Bar -->
       <div class="footer-bottom">
         <span class="footer-copy">© 2026 IMBS. All Rights Reserved.</span>
         <span class="footer-designed">Designed & Developed by <a href="https://framenflowmedia.in/" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;">Frame n Flow Media</a></span>
@@ -721,120 +450,29 @@
 
 
   <!-- ==========================================================================
-       BROCHURE DOWNLOAD MODAL (Interactive Component)
+       BROCHURE DOWNLOAD MODAL
        ========================================================================== -->
   <style>
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(17, 29, 74, 0.8);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s;
-    }
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-    .modal-card {
-      background-color: var(--navy);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--border-radius-md);
-      padding: 40px;
-      width: 90%;
-      max-width: 480px;
-      position: relative;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-      transform: scale(0.9) translateY(20px);
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .modal-overlay.active .modal-card {
-      transform: scale(1) translateY(0);
-    }
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 28px;
-      color: var(--white);
-      cursor: pointer;
-      opacity: 0.6;
-      transition: opacity 0.2s;
-    }
-    .modal-close:hover {
-      opacity: 1;
-    }
-    .modal-title {
-      font-family: var(--font-heading);
-      font-size: 28px;
-      color: var(--white);
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      border-bottom: 2px solid var(--red);
-      padding-bottom: 8px;
-      display: inline-block;
-    }
-    .modal-desc {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-      line-height: 1.5;
-    }
-    .form-group {
-      position: relative;
-      margin-bottom: 24px;
-    }
-    .form-input {
-      width: 100%;
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 8px 0;
-      color: var(--white);
-      font-family: var(--font-body);
-      font-size: 15px;
-      outline: none;
-      transition: border-bottom-color 0.3s;
-    }
-    .form-label {
-      position: absolute;
-      left: 0;
-      top: 8px;
-      color: var(--text-muted);
-      font-size: 15px;
-      pointer-events: none;
-      transition: transform 0.3s ease, font-size 0.3s ease, color 0.3s ease;
-    }
-    /* Float Label animation */
-    .form-input:focus ~ .form-label,
-    .form-input:not(:placeholder-shown) ~ .form-label {
-      transform: translateY(-20px) scale(0.8);
-      transform-origin: left;
-      color: var(--red);
-    }
-    .form-input:focus {
-      border-bottom-color: var(--red);
-    }
-    .modal-card .btn {
-      width: 100%;
-      height: 48px;
-    }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(17, 29, 74, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-card { background-color: var(--navy); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--border-radius-md); padding: 40px; width: 90%; max-width: 480px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5); transform: scale(0.9) translateY(20px); transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275); }
+    .modal-overlay.active .modal-card { transform: scale(1) translateY(0); }
+    .modal-close { position: absolute; top: 20px; right: 20px; font-size: 28px; color: var(--white); cursor: pointer; opacity: 0.6; transition: opacity 0.2s; background: none; border: none; }
+    .modal-close:hover { opacity: 1; }
+    .modal-title { font-family: var(--font-heading); font-size: 28px; color: var(--white); text-transform: uppercase; margin-bottom: 8px; border-bottom: 2px solid var(--red); padding-bottom: 8px; display: inline-block; }
+    .modal-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+    .form-group { position: relative; margin-bottom: 24px; }
+    .form-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 8px 0; color: var(--white); font-family: var(--font-body); font-size: 15px; outline: none; transition: border-bottom-color 0.3s; }
+    .form-label { position: absolute; left: 0; top: 8px; color: var(--text-muted); font-size: 15px; pointer-events: none; transition: transform 0.3s ease, font-size 0.3s ease, color 0.3s ease; }
+    .form-input:focus ~ .form-label, .form-input:not(:placeholder-shown) ~ .form-label { transform: translateY(-20px) scale(0.8); transform-origin: left; color: var(--red); }
+    .form-input:focus { border-bottom-color: var(--red); }
+    .modal-card .btn { width: 100%; height: 48px; }
   </style>
   <div class="modal-overlay" id="brochure-modal">
     <div class="modal-card">
       <button class="modal-close" id="close-brochure-modal" aria-label="Close Modal">&times;</button>
       <h3 class="modal-title">Get Program Brochure</h3>
       <p class="modal-desc">Enter your details to receive the comprehensive curriculum guide and fee breakdown in your inbox.</p>
-      
       <form id="brochure-form" novalidate>
         <div class="form-group">
           <input type="text" id="brochure-name" class="form-input" placeholder=" " required autocomplete="name">
@@ -855,8 +493,7 @@
 
 
 
-
   <!-- Main Logic Script -->
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

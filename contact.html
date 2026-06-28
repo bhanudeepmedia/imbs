@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="IMBS Only Pic Logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Get in touch with IMBS. Reach our admissions advisors via our contact form, email, or WhatsApp — available 24/7 for global student assistance from Hyderabad, India.">
+  <title>Contact Us - Institute of Management and Business Studies | IMBS</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Lenis CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="styles.css?v=6">
+
+  <!-- GSAP & Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+  <style>
+    /* ---- Contact Section Layout ---- */
+    .contact-section {
+      background-color: var(--white);
+      padding: 80px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(28, 47, 110, 0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(28, 47, 110, 0.022) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .contact-section > .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: start;
+    }
+
+    /* ---- Contact Form (Light Background) ---- */
+    .contact-form-panel {
+      background-color: var(--off-white);
+      border-radius: var(--border-radius-md);
+      padding: 40px;
+      box-shadow: 0 4px 24px rgba(28, 47, 110, 0.06);
+    }
+
+    .contact-form-panel-title {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--red);
+      display: inline-block;
+    }
+
+    .contact-form-panel-desc {
+      font-size: 14px;
+      color: #777;
+      margin-top: 12px;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* Floating-label inputs for light background */
+    .lf-group {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .lf-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.18);
+      padding: 10px 0;
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-size: 15px;
+      outline: none;
+      transition: border-bottom-color 0.3s;
+      -webkit-appearance: none;
+    }
+
+    .lf-input:focus {
+      border-bottom-color: var(--red);
+    }
+
+    .lf-label {
+      position: absolute;
+      left: 0;
+      top: 10px;
+      color: #aaa;
+      font-size: 15px;
+      font-family: var(--font-body);
+      pointer-events: none;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .lf-input:focus ~ .lf-label,
+    .lf-input:not(:placeholder-shown) ~ .lf-label {
+      transform: translateY(-22px) scale(0.8);
+      transform-origin: left;
+      color: var(--red);
+    }
+
+    .lf-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .contact-submit {
+      height: 50px;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .contact-success {
+      display: none;
+      text-align: center;
+      padding: 32px 0 8px;
+    }
+
+    .contact-success-check {
+      width: 60px;
+      height: 60px;
+      background-color: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .contact-success-check svg {
+      width: 28px;
+      height: 28px;
+      fill: none;
+      stroke: white;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .contact-success-title {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .contact-success-body {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.65;
+    }
+
+    /* ---- Info Panel ---- */
+    .contact-info-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .contact-info-label {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--red);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .contact-info-intro {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 2.5vw, 34px);
+      color: var(--navy);
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+
+    .contact-info-body {
+      font-size: 15px;
+      color: #555;
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    /* Office address card */
+    .office-card {
+      background-color: var(--off-white);
+      border-radius: var(--border-radius-md);
+      padding: 28px;
+      border-left: 4px solid var(--navy);
+    }
+
+    .office-card-label {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--red);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .office-card-name {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .office-info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .office-info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .office-info-row svg {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* WhatsApp block */
+    .wa-block {
+      background: linear-gradient(135deg, #0d7a5f 0%, #25D366 100%);
+      border-radius: var(--border-radius-md);
+      padding: 32px 28px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wa-block::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.07);
+      pointer-events: none;
+    }
+
+    .wa-block::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      right: 30px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+    }
+
+    .wa-block-icon {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 16px;
+      fill: white;
+    }
+
+    .wa-block-title {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 10px;
+    }
+
+    .wa-block-desc {
+      font-size: 14px;
+      line-height: 1.7;
+      opacity: 0.9;
+      margin-bottom: 22px;
+      max-width: 320px;
+    }
+
+    .wa-block-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      color: #0d7a5f;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 13px 26px;
+      border-radius: 4px;
+      transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .wa-block-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: #25D366;
+      flex-shrink: 0;
+    }
+
+    .wa-block-btn:hover {
+      background-color: #f0fff8;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .wa-note {
+      font-size: 12px;
+      opacity: 0.75;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    /* Responsive */
+    @media screen and (max-width: 991px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+    }
+
+    @media screen and (max-width: 767px) {
+      .contact-section {
+        padding: 60px 0;
+      }
+      .contact-form-panel {
+        padding: 28px 24px;
+      }
+    }
+
+    /* ---- Brochure Modal ---- */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(17, 29, 74, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    .modal-card { background-color: var(--navy); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--border-radius-md); padding: 40px; width: 90%; max-width: 480px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5); transform: scale(0.9) translateY(20px); transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275); }
+    .modal-overlay.active .modal-card { transform: scale(1) translateY(0); }
+    .modal-close { position: absolute; top: 20px; right: 20px; font-size: 28px; color: var(--white); cursor: pointer; opacity: 0.6; transition: opacity 0.2s; background: none; border: none; }
+    .modal-close:hover { opacity: 1; }
+    .modal-title { font-family: var(--font-heading); font-size: 28px; color: var(--white); text-transform: uppercase; margin-bottom: 8px; border-bottom: 2px solid var(--red); padding-bottom: 8px; display: inline-block; }
+    .modal-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+    .form-group { position: relative; margin-bottom: 24px; }
+    .form-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 8px 0; color: var(--white); font-family: var(--font-body); font-size: 15px; outline: none; transition: border-bottom-color 0.3s; }
+    .form-label { position: absolute; left: 0; top: 8px; color: var(--text-muted); font-size: 15px; pointer-events: none; transition: transform 0.3s ease, font-size 0.3s ease, color 0.3s ease; }
+    .form-input:focus ~ .form-label, .form-input:not(:placeholder-shown) ~ .form-label { transform: translateY(-20px) scale(0.8); transform-origin: left; color: var(--red); }
+    .form-input:focus { border-bottom-color: var(--red); }
+    .modal-card .btn { width: 100%; height: 48px; }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== -->
+  <nav class="navbar theme-warm" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" id="nav-logo" aria-label="IMBS Home">
+        <img src="Logo Warm Theme.png" alt="IMBS Logo" class="nav-logo-img">
+      </a>
+
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+        <li class="nav-item"><a href="accreditations.html" class="nav-link">Recognition</a></li>
+        <li class="nav-item nav-item-dropdown">
+          <a href="index.html#programs" class="nav-link">Programs <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <div class="mega-menu" id="dynamic-mega-menu"></div>
+        </li>
+        <li class="nav-item"><a href="admissions.html" class="nav-link">Admissions</a></li>
+        <li class="nav-item active"><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="btn btn-outline-white trigger-brochure-modal">Download Brochure</button>
+        <a href="#contact-section" class="btn btn-primary-red">Talk to an Advisor</a>
+        <a href="login.html" class="btn-student-login" aria-label="Student Login">
+          <svg class="student-login-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 6.5L12 11l10-4.5L12 2z" />
+            <path d="M6 8.3v3.7c0 1.5 2 3 6 3s6-1.5 6-3.7V8.3" />
+            <circle cx="12" cy="12.5" r="2.5" />
+            <path d="M18 20.5a6 6 0 0 0-12 0" />
+          </svg>
+        </a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle Navigation Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Overlay Menu -->
+  <div class="mobile-menu-overlay theme-warm" id="mobile-menu-overlay">
+    <ul class="mobile-menu-list">
+      <li><a href="about.html" class="mobile-menu-link">About</a></li>
+      <li><a href="accreditations.html" class="mobile-menu-link">Recognition</a></li>
+      <li><a href="programs-list.html" class="mobile-menu-link">Programs</a></li>
+      <li><a href="admissions.html" class="mobile-menu-link">Admissions</a></li>
+      <li><a href="blog.html" class="mobile-menu-link">Blog</a></li>
+      <li><a href="contact.html" class="mobile-menu-link">Contact</a></li>
+    </ul>
+    <div class="mobile-menu-actions">
+      <a href="login.html" class="btn btn-outline-white" style="display:block;margin-bottom:10px;text-align:center;">Student Login</a>
+      <button class="btn btn-outline-white trigger-brochure-modal">Download Brochure</button>
+      <a href="#contact-section" class="btn btn-primary-red">Talk to an Advisor</a>
+    </div>
+  </div>
+
+
+  <!-- ==========================================================================
+       PAGE HERO — Contact
+       ========================================================================== -->
+  <section class="page-hero" id="page-hero">
+    <div class="container">
+      <div class="page-hero-content">
+        <span class="page-hero-overline">Get In Touch</span>
+        <h1 class="page-hero-title">We're Here<br>To Help You.</h1>
+        <p class="page-hero-desc">
+          Whether you have questions about a program, need help with your application, or want to speak to an advisor — our team is available <strong>24/7 globally</strong> to support your journey.
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================================================
+       SECTION — CONTACT GRID (Form + Info)
+       ========================================================================== -->
+  <section class="contact-section" id="contact-section">
+    <div class="container">
+
+      <div style="text-align: center; margin-bottom: 56px;">
+        <span class="overline-label reveal-up">Send Us a Message</span>
+        <h2 class="section-title-dark reveal-up">Contact Our Admissions Team</h2>
+      </div>
+
+      <div class="contact-grid">
+
+        <!-- LEFT COLUMN: Contact Form -->
+        <div class="reveal-up">
+          <div class="contact-form-panel">
+            <h3 class="contact-form-panel-title">Inquiry Form</h3>
+            <p class="contact-form-panel-desc">Fill in the form below and an advisor will respond within 24 hours with personalised program information.</p>
+
+            <form id="contact-form" novalidate>
+              <div class="lf-group">
+                <input type="text" id="cf-name" class="lf-input" placeholder=" " required autocomplete="name">
+                <label for="cf-name" class="lf-label">Full Name</label>
+              </div>
+              <div class="lf-group">
+                <input type="email" id="cf-email" class="lf-input" placeholder=" " required autocomplete="email">
+                <label for="cf-email" class="lf-label">Email Address</label>
+              </div>
+              <div class="lf-group">
+                <input type="tel" id="cf-phone" class="lf-input" placeholder=" " required autocomplete="tel">
+                <label for="cf-phone" class="lf-label">Phone / WhatsApp Number</label>
+              </div>
+              <div class="lf-group">
+                <input type="text" id="cf-subject" class="lf-input" placeholder=" ">
+                <label for="cf-subject" class="lf-label">Subject</label>
+              </div>
+              <div class="lf-group">
+                <textarea id="cf-message" class="lf-input lf-textarea" placeholder=" " rows="4"></textarea>
+                <label for="cf-message" class="lf-label">Message</label>
+              </div>
+              <button type="submit" class="btn btn-primary-red contact-submit">Send Message &rarr;</button>
+            </form>
+
+            <div class="contact-success" id="contact-success">
+              <div class="contact-success-check">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <h4 class="contact-success-title">Message Sent!</h4>
+              <p class="contact-success-body">Thank you for reaching out. An IMBS admissions advisor will respond within 24 hours at the email address you provided.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Office Info + WhatsApp -->
+        <div class="contact-info-panel reveal-up">
+
+          <div>
+            <span class="contact-info-label">Our Office</span>
+            <h3 class="contact-info-intro">Reach Us Directly Anytime, From Anywhere</h3>
+            <p class="contact-info-body">
+              Our team operates across time zones to support learners globally. Whether you prefer email, a call, or a quick WhatsApp message — we're always within reach.
+            </p>
+          </div>
+
+          <!-- Hyderabad Office Card -->
+          <div class="office-card">
+            <span class="office-card-label">Headquarters</span>
+            <div class="office-card-name">Hyderabad, India</div>
+
+            <div class="office-info-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1C2F6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Hyderabad, Telangana, India<br><span style="font-size:12px;color:#aaa;">[Full address — CLIENT TO PROVIDE]</span></span>
+            </div>
+
+            <div class="office-info-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1C2F6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <span>[PLACEHOLDER — CLIENT TO PROVIDE]</span>
+            </div>
+
+            <div class="office-info-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1C2F6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <span>[PLACEHOLDER — CLIENT TO PROVIDE]</span>
+            </div>
+
+            <div class="office-info-row" style="margin-bottom:0;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1C2F6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>Monday – Saturday, 9:00 AM – 7:00 PM IST<br><span style="font-size:12px;color:#aaa;">WhatsApp support available 24/7</span></span>
+            </div>
+          </div>
+
+          <!-- WhatsApp Block -->
+          <div class="wa-block">
+            <svg class="wa-block-icon" viewBox="0 0 24 24">
+              <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.72 14.12c-.24.69-1.44 1.35-1.98 1.41-.53.06-1.04.28-3.41-.65-2.85-1.12-4.68-4-4.82-4.19-.15-.19-1.18-1.58-1.18-3a3.16 3.16 0 0 1 .98-2.31c.28-.28.62-.35.83-.35.15 0 .31 0 .44.01.14.01.32-.05.5.38.19.46.65 1.58.71 1.71.06.13.1.28.01.46-.09.18-.18.3-.35.49-.17.19-.36.43-.52.58-.18.17-.37.36-.16.72.21.36.94 1.55 2.01 2.5 1.38 1.23 2.54 1.61 2.9 1.79.36.18.57.15.79-.1.21-.24.93-1.08 1.18-1.45.24-.37.49-.31.83-.18.34.13 2.16 1.02 2.53 1.2.37.18.62.27.71.43.09.16.09.93-.15 1.62z"/>
+            </svg>
+            <div class="wa-block-title">Prefer WhatsApp?</div>
+            <p class="wa-block-desc">
+              Connect with an IMBS advisor instantly on WhatsApp. Get answers to your questions, program recommendations, and fee information — all in one chat.
+            </p>
+            <a href="https://wa.me/[PLACEHOLDER]" target="_blank" rel="noopener" class="wa-block-btn">
+              <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.72 14.12c-.24.69-1.44 1.35-1.98 1.41-.53.06-1.04.28-3.41-.65-2.85-1.12-4.68-4-4.82-4.19-.15-.19-1.18-1.58-1.18-3a3.16 3.16 0 0 1 .98-2.31c.28-.28.62-.35.83-.35.15 0 .31 0 .44.01.14.01.32-.05.5.38.19.46.65 1.58.71 1.71.06.13.1.28.01.46-.09.18-.18.3-.35.49-.17.19-.36.43-.52.58-.18.17-.37.36-.16.72.21.36.94 1.55 2.01 2.5 1.38 1.23 2.54 1.61 2.9 1.79.36.18.57.15.79-.1.21-.24.93-1.08 1.18-1.45.24-.37.49-.31.83-.18.34.13 2.16 1.02 2.53 1.2.37.18.62.27.71.43.09.16.09.93-.15 1.62z"/></svg>
+              Start WhatsApp Chat
+            </a>
+            <p class="wa-note">*Typically replies within minutes. Available 24 hours, 7 days a week.</p>
+          </div>
+
+        </div>
+        <!-- End Right Column -->
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================================================
+       FOOTER
+       ========================================================================== -->
+  <footer class="footer watermark-bg" id="contact-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-logo">
+            <img src="IMBS Only Pic Logo.png" alt="IMBS Logo" class="logo-img" style="height: 80px; width: auto; display: block;">
+          </div>
+          <p class="footer-tagline">Ignite. Inspire. Innovate.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social-icon" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+            </a>
+            <a href="#" class="footer-social-icon" aria-label="Instagram">
+              <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6m4.4 3a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m5-2.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z"/></svg>
+            </a>
+            <a href="#" class="footer-social-icon" aria-label="Twitter">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3 class="footer-title">Programs</h3>
+          <ul class="footer-links">
+            <li><a href="category.html?category=doctorate" class="footer-link">Doctorate</a></li>
+            <li><a href="category.html?category=masters" class="footer-link">Post Graduate</a></li>
+            <li><a href="category.html?category=graduation" class="footer-link">Graduate</a></li>
+            <li><a href="category.html?category=diploma" class="footer-link">Diploma</a></li>
+            <li><a href="category.html?category=adv-diploma" class="footer-link">Adv. Diploma</a></li>
+            <li><a href="category.html?category=pg-diploma" class="footer-link">PG Diploma</a></li>
+            <li><a href="category.html?category=mdp" class="footer-link">MDP</a></li>
+            <li><a href="category.html?category=certification" class="footer-link">Certificate</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3 class="footer-title">Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="about.html" class="footer-link">About IMBS</a></li>
+            <li><a href="accreditations.html" class="footer-link">Accreditations</a></li>
+            <li><a href="admissions.html" class="footer-link">Admissions Process</a></li>
+            <li><a href="partners.html" class="footer-link">Partner Universities</a></li>
+            <li><a href="blog.html" class="footer-link">Blog</a></li>
+            <li><a href="index.html#accreditations" class="footer-link">UGC Disclaimer</a></li>
+            <li><a href="contact.html" class="footer-link">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3 class="footer-title">Contact</h3>
+          <div class="footer-contact-info">
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span>[PLACEHOLDER — CLIENT TO PROVIDE]</span>
+            </div>
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>[PLACEHOLDER — CLIENT TO PROVIDE]</span>
+            </div>
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Hyderabad, India</span>
+            </div>
+            <a href="https://wa.me/[PLACEHOLDER]" target="_blank" rel="noopener" class="whatsapp-link">
+              <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.72 14.12c-.24.69-1.44 1.35-1.98 1.41-.53.06-1.04.28-3.41-.65-2.85-1.12-4.68-4-4.82-4.19-.15-.19-1.18-1.58-1.18-3a3.16 3.16 0 0 1 .98-2.31c.28-.28.62-.35.83-.35.15 0 .31 0 .44.01.14.01.32-.05.5.38.19.46.65 1.58.71 1.71.06.13.1.28.01.46-.09.18-.18.3-.35.49-.17.19-.36.43-.52.58-.18.17-.37.36-.16.72.21.36.94 1.55 2.01 2.5 1.38 1.23 2.54 1.61 2.9 1.79.36.18.57.15.79-.1.21-.24.93-1.08 1.18-1.45.24-.37.49-.31.83-.18.34.13 2.16 1.02 2.53 1.2.37.18.62.27.71.43.09.16.09.93-.15 1.62z"/></svg>
+              Chat on WhatsApp
+            </a>
+            <p class="contact-note">*Contact lines available 24/7 for global student assistance.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span class="footer-copy">&copy; 2026 IMBS. All Rights Reserved.</span>
+        <span class="footer-designed">Designed & Developed by <a href="https://framenflowmedia.in/" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;">Frame n Flow Media</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="back-to-top" aria-label="Scroll Back to Top">
+    <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+  </button>
+
+
+  <!-- ==========================================================================
+       BROCHURE DOWNLOAD MODAL
+       ========================================================================== -->
+  <div class="modal-overlay" id="brochure-modal">
+    <div class="modal-card">
+      <button class="modal-close" id="close-brochure-modal" aria-label="Close Modal">&times;</button>
+      <h3 class="modal-title">Get Program Brochure</h3>
+      <p class="modal-desc">Enter your details to receive the comprehensive curriculum guide and fee breakdown in your inbox.</p>
+      <form id="brochure-form" novalidate>
+        <div class="form-group">
+          <input type="text" id="brochure-name" class="form-input" placeholder=" " required autocomplete="name">
+          <label for="brochure-name" class="form-label">Full Name</label>
+        </div>
+        <div class="form-group">
+          <input type="email" id="brochure-email" class="form-input" placeholder=" " required autocomplete="email">
+          <label for="brochure-email" class="form-label">Email Address</label>
+        </div>
+        <div class="form-group">
+          <input type="tel" id="brochure-phone" class="form-input" placeholder=" " required autocomplete="tel">
+          <label for="brochure-phone" class="form-label">Phone Number</label>
+        </div>
+        <button type="submit" class="btn btn-primary-red">Request Brochure</button>
+      </form>
+    </div>
+  </div>
+
+
+
+  <!-- Main Logic Script -->
+  <script src="app.js?v=6"></script>
+
+  <!-- Contact Form Handler -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form      = document.getElementById('contact-form');
+      const successEl = document.getElementById('contact-success');
+      const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name    = document.getElementById('cf-name').value.trim();
+        const email   = document.getElementById('cf-email').value.trim();
+        const phone   = document.getElementById('cf-phone').value.trim();
+        const subject = document.getElementById('cf-subject').value.trim();
+        const message = document.getElementById('cf-message').value.trim();
+
+        // Validation
+        if (!name || !email || !phone) return;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          document.getElementById('cf-email').focus();
+          return;
+        }
+        if (!/^\+?[\d\s\-().]{7,}$/.test(phone)) {
+          document.getElementById('cf-phone').focus();
+          return;
+        }
+
+        // Loading state
+        const originalLabel = submitBtn.innerHTML;
+        submitBtn.disabled  = true;
+        submitBtn.innerHTML = 'Sending&hellip;';
+
+        try {
+          const res = await fetch('api.php?action=save_lead', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ name, email, phone, subject, message, source: 'contact_page' }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            form.style.display = 'none';
+            if (successEl) successEl.style.display = 'block';
+          } else {
+            throw new Error(data.error || 'Submission failed');
+          }
+        } catch (err) {
+          submitBtn.disabled  = false;
+          submitBtn.innerHTML = originalLabel;
+          alert('Sorry, something went wrong. Please try again or contact us via WhatsApp.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard — IMBS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Razorpay Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    /* ── Design tokens ── */
+    :root {
+      --navy:       #1C2F6E;
+      --deep-navy:  #111D4A;
+      --muted-navy: #2A3F7E;
+      --red:        #C8102E;
+      --red-hover:  #A00D24;
+      --white:      #FFFFFF;
+      --off-white:  #F4F4F0;
+      --light-grey: #E8E8E8;
+      --text-dark:  #333333;
+      --text-muted: #6B7A99;
+      --green:      #0A7C48;
+      --green-bg:   #EBF7F2;
+      --amber:      #B45309;
+      --amber-bg:   #FEF3C7;
+      --font-display: 'Playfair Display', serif;
+      --font-heading: 'Barlow Condensed', sans-serif;
+      --font-body:    'Inter', sans-serif;
+      --sidebar-w:    260px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--off-white);
+      color: var(--text-dark);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══════════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════════ */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-logo img {
+      height: 54px;
+    }
+
+    .sidebar-student {
+      padding: 24px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .student-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .student-name {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .student-id {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 3px;
+    }
+
+    .sidebar-nav {
+      padding: 20px 0;
+      flex: 1;
+    }
+
+    .nav-section-label {
+      font-family: var(--font-heading);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      padding: 4px 28px 8px;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 28px;
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      transition: color 0.2s, background 0.2s;
+      position: relative;
+    }
+
+    .sidebar-link:hover {
+      color: var(--white);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .sidebar-link.active {
+      color: var(--white);
+      background: rgba(200,16,46,0.15);
+    }
+
+    .sidebar-link.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--red);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .sidebar-link svg { flex-shrink: 0; opacity: 0.7; }
+    .sidebar-link.active svg, .sidebar-link:hover svg { opacity: 1; }
+
+    .sidebar-footer {
+      padding: 20px 28px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .logout-btn:hover { color: var(--red); }
+
+    /* ══════════════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════════════ */
+    .main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+    }
+
+    /* Top bar */
+    .topbar {
+      height: 68px;
+      background: var(--white);
+      border-bottom: 1px solid var(--light-grey);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 36px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-title {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: 0.02em;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar-date {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-bg);
+      color: var(--green);
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+
+    /* Content area */
+    .content {
+      padding: 36px;
+    }
+
+    /* Welcome banner */
+    .welcome-banner {
+      background: linear-gradient(115deg, var(--navy) 0%, var(--muted-navy) 60%, #1a3a8f 100%);
+      border-radius: 16px;
+      padding: 36px 40px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-banner::after {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(200,16,46,0.12);
+      pointer-events: none;
+    }
+
+    .welcome-overline {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+
+    .welcome-heading {
+      font-family: var(--font-display);
+      font-size: 32px;
+      color: var(--white);
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .welcome-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Grid layout ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--light-grey);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 20px 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-label {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-icon.navy  { background: rgba(28,47,110,0.08); color: var(--navy); }
+    .card-icon.red   { background: rgba(200,16,46,0.08); color: var(--red); }
+    .card-icon.green { background: var(--green-bg); color: var(--green); }
+    .card-icon.amber { background: var(--amber-bg); color: var(--amber); }
+
+    .card-body {
+      padding: 12px 24px 24px;
+    }
+
+    .card-value {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ── Enrolment detail card ── */
+    .enrolment-card {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--light-grey);
+      padding: 28px 28px;
+      margin-bottom: 24px;
+    }
+
+    .section-heading {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+      letter-spacing: 0.03em;
+    }
+
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px 32px;
+    }
+
+    .detail-item {}
+
+    .detail-label {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .detail-value.highlight {
+      color: var(--navy);
+      font-family: var(--font-heading);
+      font-size: 17px;
+    }
+
+    .category-tag {
+      display: inline-block;
+      background: rgba(28,47,110,0.08);
+      color: var(--navy);
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    /* ── Receipt card ── */
+    .receipt-card {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--light-grey);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .receipt-card-header {
+      padding: 24px 28px 16px;
+      border-bottom: 1px solid var(--light-grey);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .receipt-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .receipt-table th {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 14px 28px;
+      background: var(--off-white);
+      border-bottom: 1px solid var(--light-grey);
+    }
+
+    .receipt-table td {
+      padding: 14px 28px;
+      font-size: 14px;
+      color: var(--text-dark);
+      border-bottom: 1px solid var(--light-grey);
+      vertical-align: middle;
+    }
+
+    .receipt-table tr:last-child td { border-bottom: none; }
+
+    .receipt-table tr:hover td { background: var(--off-white); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .badge-paid   { background: var(--green-bg); color: var(--green); }
+    .badge-pending { background: var(--amber-bg); color: var(--amber); }
+    .badge-upcoming { background: rgba(28,47,110,0.07); color: var(--navy); }
+
+    .badge::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .amount-paid { font-weight: 700; color: var(--green); }
+    .amount-due  { font-weight: 600; color: var(--amber); }
+    .amount-upcoming { color: var(--text-muted); }
+
+    /* Total row */
+    .total-row td {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      background: rgba(28,47,110,0.04);
+      border-top: 2px solid var(--light-grey);
+    }
+
+    /* ── Instalment schedule card ── */
+    .schedule-card {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--light-grey);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .schedule-header {
+      padding: 24px 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .progress-bar-wrap {
+      background: var(--light-grey);
+      border-radius: 999px;
+      height: 8px;
+      margin: 0 28px 24px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--navy), var(--red));
+      border-radius: 999px;
+      transition: width 0.8s ease;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 28px 20px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .progress-label strong { color: var(--navy); }
+
+    .instalment-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .instalment-table th {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 12px 28px;
+      background: var(--off-white);
+      border-top: 1px solid var(--light-grey);
+      border-bottom: 1px solid var(--light-grey);
+    }
+
+    .instalment-table td {
+      padding: 14px 28px;
+      font-size: 14px;
+      color: var(--text-dark);
+      border-bottom: 1px solid var(--light-grey);
+      vertical-align: middle;
+    }
+
+    .instalment-table tr:last-child td { border-bottom: none; }
+    .instalment-table tr:hover td { background: var(--off-white); }
+
+    .inst-number {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(28,47,110,0.08);
+      color: var(--navy);
+    }
+
+    .inst-number.done {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .days-left {
+      font-size: 12px;
+      color: var(--amber);
+      font-weight: 600;
+    }
+
+    /* ── Quick action card ── */
+    .quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 24px;
+    }
+
+    .quick-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      border-radius: 10px;
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      border: none;
+    }
+
+    .quick-btn-primary {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .quick-btn-primary:hover {
+      background: var(--muted-navy);
+      transform: translateY(-1px);
+    }
+
+    .quick-btn-outline {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--light-grey);
+    }
+
+    .quick-btn-outline:hover {
+      background: var(--off-white);
+      border-color: var(--navy);
+    }
+
+    .quick-btn-danger {
+      background: transparent;
+      color: var(--red);
+      border: 1.5px solid rgba(200,16,46,0.2);
+    }
+
+    .quick-btn-danger:hover {
+      background: rgba(200,16,46,0.05);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1100px) {
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 820px) {
+      :root { --sidebar-w: 0px; }
+      .sidebar { transform: translateX(-260px); width: 260px; transition: transform 0.3s ease; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .hamburger-toggle { display: flex !important; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .content { padding: 20px; }
+    }
+
+    .hamburger-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--navy);
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 90;
+    }
+
+      .overlay.visible { display: block; }
+
+      /* Modal Styles */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 200;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal-content {
+        background: var(--white);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 440px;
+        padding: 24px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--light-grey);
+        animation: modalFadeIn 0.3s ease;
+      }
+      @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--light-grey);
+        padding-bottom: 12px;
+      }
+      .modal-header h3 {
+        font-family: var(--font-heading);
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--navy);
+      }
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: color 0.2s;
+      }
+      .modal-close:hover {
+        color: var(--red);
+      }
+      .receipt-select-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .receipt-option-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        background: var(--off-white);
+        border: 1px solid var(--light-grey);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: left;
+        width: 100%;
+      }
+      .receipt-option-btn:hover {
+        border-color: var(--navy);
+        background: rgba(28, 47, 110, 0.04);
+      }
+      .receipt-option-btn .btn-title {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--navy);
+      }
+      .receipt-option-btn .btn-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .receipt-option-btn .btn-amount {
+        font-weight: 700;
+        color: var(--green);
+        font-size: 14px;
+      }
+
+      /* Print invoice layout */
+      .print-only {
+        display: none;
+      }
+      #printable-receipt {
+        font-family: 'Inter', sans-serif;
+        color: #333;
+        padding: 40px;
+        background: #fff;
+      }
+      .receipt-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .receipt-logo {
+        height: 60px;
+      }
+      .receipt-title {
+        text-align: right;
+      }
+      .receipt-title h1 {
+        font-size: 28px;
+        margin: 0;
+      }
+      .receipt-no {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--red);
+      }
+      .receipt-divider {
+        height: 2px;
+        background: var(--navy);
+        margin-bottom: 24px;
+      }
+      .receipt-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 30px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .print-receipt-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+      }
+      .print-receipt-table th {
+        background: var(--off-white);
+        padding: 10px 14px;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-align: left;
+        border-bottom: 2px solid var(--light-grey);
+      }
+      .print-receipt-table td {
+        padding: 14px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--light-grey);
+      }
+      .receipt-total-section {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 40px;
+      }
+      .receipt-total-row {
+        display: flex;
+        gap: 20px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+      .receipt-total-row .total-amount {
+        color: var(--navy);
+      }
+      .receipt-footer {
+        text-align: center;
+        border-top: 1.5px solid var(--light-grey);
+        padding-top: 20px;
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.6;
+      }
+
+      @media print {
+        body {
+          background: #fff !important;
+          color: #000 !important;
+        }
+        .sidebar, .main, .overlay, .modal-overlay, .no-print {
+          display: none !important;
+        }
+        #printable-receipt {
+          display: block !important;
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          margin: 0;
+          padding: 0;
+          box-shadow: none !important;
+          border: none !important;
+        }
+        #printable-receipt .receipt-header {
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+        }
+        #printable-receipt .receipt-info-grid {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+        }
+        #printable-receipt .receipt-total-section {
+          display: flex !important;
+          justify-content: flex-end !important;
+        }
+        #printable-receipt .receipt-total-row {
+          display: flex !important;
+        }
+      }
+  </style>
+</head>
+<body>
+
+<!-- Overlay for mobile sidebar -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ══════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-logo">
+    <img src="Logo Warm Theme.png" alt="IMBS">
+  </div>
+
+  <div class="sidebar-student">
+    <div class="student-avatar" id="side-avatar">AA</div>
+    <div class="student-name" id="side-name">Arjun Anand</div>
+    <div class="student-id" id="side-id">Student ID: IMBS-2024-0472</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a href="dashboard.html" class="sidebar-link active">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="login.html" class="logout-btn">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+      Sign Out
+    </a>
+  </div>
+
+</aside>
+
+<!-- ══════════════════════════════════════════
+     MAIN
+══════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:16px;">
+      <button class="hamburger-toggle" id="hamburgerToggle" aria-label="Open menu">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <span class="topbar-title">Student Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="todayDate"></span>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        Enrolled
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Welcome banner -->
+    <div class="welcome-banner">
+      <p class="welcome-overline">Student Portal</p>
+      <h1 class="welcome-heading" id="welcome-heading">Welcome back, Arjun!</h1>
+      <p class="welcome-sub">Here's a summary of your enrolment, fee payments, and upcoming instalments.</p>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="grid-3" style="margin-bottom:28px;">
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Programme Duration</span>
+          <div class="card-icon navy">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-value" id="card-duration">24 Months</div>
+          <div class="card-sub" id="card-completion">Expected completion: Jan 2027</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Total Fees Paid</span>
+          <div class="card-icon green">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-value" style="color:var(--green)" id="card-total-paid">$3,000</div>
+          <div class="card-sub" id="card-paid-desc">3 of 6 instalments paid</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Balance Remaining</span>
+          <div class="card-icon amber">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-value" style="color:var(--amber)" id="card-balance-due">$3,000</div>
+          <div class="card-sub" id="card-balance-due-sub">Next due: 15 Aug 2026</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Enrolment Details + Quick Actions -->
+    <div class="grid-2" style="margin-bottom:28px; align-items:start;">
+
+      <!-- Enrolment details -->
+      <div class="enrolment-card">
+        <div class="section-heading">Enrolment Details</div>
+        <div class="section-desc">Your registered programme and admission information.</div>
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">Enrolled Programme</div>
+            <div class="detail-value highlight" id="detail-program">MBA in International Business</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Category</div>
+            <div class="detail-value"><span class="category-tag" id="detail-category">Business &amp; Management</span></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Enrolment Date</div>
+            <div class="detail-value" id="detail-enrolled-date">15 January 2025</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Study Mode</div>
+            <div class="detail-value">100% Online</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Awarding Institution</div>
+            <div class="detail-value">IMBS via Partner University</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Student Status</div>
+            <div class="detail-value"><span class="badge badge-paid">Active</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="card">
+        <div class="card-header" style="padding: 24px 24px 12px;">
+          <div>
+            <div class="section-heading">Quick Actions</div>
+            <div class="section-desc" style="margin-bottom:0">Shortcuts to common tasks.</div>
+          </div>
+        </div>
+        <div class="quick-actions">
+          <button class="quick-btn quick-btn-primary" onclick="openReceiptModal()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"/></svg>
+            Download Fee Receipt
+          </button>
+          <a href="https://wa.me/917702251899" target="_blank" class="quick-btn quick-btn-outline">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/></svg>
+            Contact Advisor
+          </a>
+          <a href="https://wa.me/917702251899" target="_blank" class="quick-btn quick-btn-outline">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+            Request Certificate
+          </a>
+          <a href="login.html" class="quick-btn quick-btn-danger">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+            Sign Out
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Fees Paid — Receipt Table -->
+    <div class="receipt-card" id="fees">
+      <div class="receipt-card-header">
+        <div>
+          <div class="section-heading">Fee Payment History</div>
+          <div class="section-desc" style="margin-bottom:0">Official receipt records for all payments received.</div>
+        </div>
+        <button onclick="window.print()" style="background:var(--navy); color:#fff; border:none; border-radius:8px; padding:10px 20px; font-family:var(--font-heading); font-size:13px; font-weight:700; letter-spacing:0.08em; cursor:pointer; display:flex; align-items:center; gap:8px; transition: background 0.2s;" onmouseover="this.style.background='var(--muted-navy)'" onmouseout="this.style.background='var(--navy)'">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+          Export PDF
+        </button>
+      </div>
+
+      <table class="receipt-table">
+        <thead>
+          <tr>
+            <th>Receipt No.</th>
+            <th>Description</th>
+            <th>Payment Date</th>
+            <th>Method</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="receipts-tbody">
+          <tr>
+            <td><strong style="font-family:var(--font-heading); color:var(--navy)">RCP-2025-001</strong></td>
+            <td>Instalment 1 of 6 — MBA IB</td>
+            <td>20 Jan 2025</td>
+            <td>Bank Transfer</td>
+            <td class="amount-paid">$1,000</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+          </tr>
+          <tr>
+            <td><strong style="font-family:var(--font-heading); color:var(--navy)">RCP-2025-002</strong></td>
+            <td>Instalment 2 of 6 — MBA IB</td>
+            <td>15 Apr 2025</td>
+            <td>Credit Card</td>
+            <td class="amount-paid">$1,000</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+          </tr>
+          <tr>
+            <td><strong style="font-family:var(--font-heading); color:var(--navy)">RCP-2025-003</strong></td>
+            <td>Instalment 3 of 6 — MBA IB</td>
+            <td>12 Nov 2025</td>
+            <td>Bank Transfer</td>
+            <td class="amount-paid">$1,000</td>
+            <td><span class="badge badge-paid">Paid</span></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="4">Total Paid</td>
+            <td class="amount-paid" id="receipts-total-paid">$3,000</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Remaining Instalment Schedule -->
+    <div class="schedule-card">
+      <div class="schedule-header">
+        <div>
+          <div class="section-heading">Remaining Instalment Schedule</div>
+          <div class="section-desc" id="schedule-summary-title" style="margin-bottom:0">3 instalments outstanding · Programme total: $6,000</div>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar-fill" style="width: 50%"></div>
+      </div>
+      <div class="progress-label">
+        <span id="progress-paid-label"><strong>$3,000</strong> paid</span>
+        <span id="progress-percent-label">50% complete</span>
+        <span id="progress-remaining-label"><strong>$3,000</strong> remaining</span>
+      </div>
+
+      <table class="instalment-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Due Date</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Days Left</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="schedule-tbody">
+          <tr>
+            <td><span class="inst-number done">1</span></td>
+            <td>20 Jan 2025</td>
+            <td>Instalment 1 — MBA IB</td>
+            <td class="amount-paid">$1,000</td>
+            <td><span class="badge badge-paid">Done</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+          </tr>
+          <tr>
+            <td><span class="inst-number done">2</span></td>
+            <td>15 Apr 2025</td>
+            <td>Instalment 2 — MBA IB</td>
+            <td class="amount-paid">$1,000</td>
+            <td><span class="badge badge-paid">Done</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+          </tr>
+          <tr>
+            <td><span class="inst-number done">3</span></td>
+            <td>12 Nov 2025</td>
+            <td>Instalment 3 — MBA IB</td>
+            <td class="amount-paid">$1,000</td>
+            <td><span class="badge badge-paid">Done</span></td>
+            <td><span class="badge badge-paid">Paid</span></td>
+          </tr>
+          <tr style="background: rgba(200,16,46,0.02)">
+            <td><span class="inst-number">4</span></td>
+            <td><strong>15 Aug 2026</strong></td>
+            <td>Instalment 4 — MBA IB</td>
+            <td class="amount-due">$1,000</td>
+            <td><span class="days-left" id="days4">Calculating…</span></td>
+            <td><span class="badge badge-pending">Due Soon</span></td>
+          </tr>
+          <tr>
+            <td><span class="inst-number">5</span></td>
+            <td>15 Nov 2026</td>
+            <td>Instalment 5 — MBA IB</td>
+            <td class="amount-upcoming">$1,000</td>
+            <td><span class="amount-upcoming">—</span></td>
+            <td><span class="badge badge-upcoming">Upcoming</span></td>
+          </tr>
+          <tr>
+            <td><span class="inst-number">6</span></td>
+            <td>15 Jan 2027</td>
+            <td>Instalment 6 — MBA IB (Final)</td>
+            <td class="amount-upcoming">$1,000</td>
+            <td><span class="amount-upcoming">—</span></td>
+            <td><span class="badge badge-upcoming">Upcoming</span></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="3">Remaining Balance</td>
+            <td class="amount-due" id="schedule-balance-remaining" style="color:var(--amber)">$3,000</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+  <!-- Modal for selecting receipt -->
+  <div id="receipt-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Select Fee Receipt</h3>
+        <button class="modal-close" onclick="closeReceiptModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 16px; color: var(--text-muted); font-size: 14px;">Please choose which semester's fee receipt you would like to download:</p>
+        <div id="receipt-select-list" class="receipt-select-list">
+          <!-- Dynamic list of buttons/options -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Printable receipt container (Hidden on screen, shown on print) -->
+  <div id="printable-receipt" class="print-only">
+    <div class="receipt-header">
+      <img src="Logo Warm Theme.png" alt="IMBS Logo" class="receipt-logo">
+      <div class="receipt-title">
+        <h1>OFFICIAL RECEIPT</h1>
+        <p class="receipt-no" id="print-receipt-no">RCP-2026-000</p>
+      </div>
+    </div>
+    
+    <div class="receipt-divider"></div>
+    
+    <div class="receipt-info-grid">
+      <div>
+        <h3 style="font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 8px;">Billed To:</h3>
+        <p><strong id="print-student-name">Student Name</strong></p>
+        <p id="print-student-id">Student ID</p>
+        <p id="print-student-email">email@example.com</p>
+      </div>
+      <div style="text-align: right;">
+        <h3 style="font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 8px;">Receipt Details:</h3>
+        <p>Date: <span id="print-receipt-date">25 Jun 2026</span></p>
+        <p>Payment Method: <span id="print-payment-method">Online Payment</span></p>
+        <p>Status: <strong style="color: var(--green);">PAID</strong></p>
+      </div>
+    </div>
+    
+    <table class="print-receipt-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th style="text-align: right;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong id="print-item-desc">Semester 1 Fee Payment</strong>
+            <p id="print-item-course">Doctorate in Business Administration (DBA)</p>
+          </td>
+          <td style="text-align: right; font-weight: bold;" id="print-item-amount">₹19,200</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="receipt-total-section">
+      <div class="receipt-total-row">
+        <span>Total Paid:</span>
+        <span class="total-amount" id="print-total-amount">₹19,200</span>
+      </div>
+    </div>
+    
+    <div class="receipt-footer">
+      <p>Thank you for your payment!</p>
+      <p>This is a computer-generated document. No signature is required.</p>
+      <p>Institute of Management and Business Studies (IMBS) | support@imbs.edu</p>
+    </div>
+  </div>
+
+<script>
+  /* Authentication Check */
+  const token = localStorage.getItem('student_token');
+  if (!token) {
+    window.location.href = 'login.html';
+  }
+
+  /* Today's date in topbar */
+  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-GB', opts);
+
+  /* Mobile sidebar toggle */
+  const sidebar  = document.getElementById('sidebar');
+  const overlay  = document.getElementById('overlay');
+  const hamburger = document.getElementById('hamburgerToggle');
+
+  hamburger.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('visible');
+  });
+
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+  });
+
+  /* Logout button handlers */
+  document.querySelectorAll('a[href="login.html"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('student_token');
+      localStorage.removeItem('student_info');
+      window.location.href = 'login.html';
+    });
+  });
+
+  /* Load Razorpay Key ID */
+  let RAZORPAY_KEY_ID = '';
+  async function loadRazorpayKey() {
+    try {
+      const res = await fetch('api.php?action=get_razorpay_key');
+      if (res.ok) {
+        const data = await res.json();
+        RAZORPAY_KEY_ID = data.key_id;
+      }
+    } catch (e) {
+      console.error('Failed to load Razorpay Key ID:', e);
+    }
+  }
+  loadRazorpayKey();
+
+  /* Load Dynamic Dashboard Data */
+  async function loadDashboard() {
+    try {
+      const res = await fetch('api.php?action=get_student_dashboard', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem('student_token');
+          window.location.href = 'login.html';
+          return;
+        }
+        throw new Error('Failed to fetch dashboard data');
+      }
+      const data = await res.json();
+      window.currentDashboardData = data; // Store globally
+      renderDashboard(data);
+    } catch (e) {
+      console.error(e);
+      alert('Error loading student dashboard details.');
+    }
+  }
+
+  function renderDashboard(data) {
+    const student = data.student;
+    const payments = data.payments;
+    const totalPaid = data.total_paid;
+    const course = data.course;
+
+    let currency = 'USD';
+    let symbol = '$';
+    if (payments && payments.length > 0) {
+      currency = payments[0].currency || 'USD';
+    }
+    if (currency === 'INR') symbol = '₹';
+
+    const formatCurrency = (amt) => {
+      if (currency === 'INR') {
+        return symbol + Number(amt).toLocaleString('en-IN');
+      } else {
+        return symbol + Number(amt).toLocaleString('en-US');
+      }
+    };
+
+    // 1. Sidebar details
+    const nameParts = student.name.split(' ');
+    const initials = nameParts.map(p => p[0]).join('').substring(0, 2).toUpperCase();
+    document.getElementById('side-avatar').textContent = initials;
+    document.getElementById('side-name').textContent = student.name;
+    const regYear = new Date(student.created_at || Date.now()).getFullYear();
+    const cleanEmailHash = Math.abs(student.email.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0) % 10000);
+    document.getElementById('side-id').textContent = `Student ID: IMBS-${regYear}-${cleanEmailHash.toString().padStart(4, '0')}`;
+
+    // 2. Welcome Banner
+    document.getElementById('welcome-heading').textContent = `Welcome back, ${student.name.split(' ')[0]}!`;
+
+    // 3. Program Duration Card
+    const duration = course.hero?.duration || '24 Months';
+    document.getElementById('card-duration').textContent = duration;
+    
+    let monthsToAdd = 24;
+    if (duration.toLowerCase().includes('12')) monthsToAdd = 12;
+    else if (duration.toLowerCase().includes('18')) monthsToAdd = 18;
+    const enrollDateObj = new Date(student.created_at || '2025-01-20');
+    const compDateObj = new Date(enrollDateObj.setMonth(enrollDateObj.getMonth() + monthsToAdd));
+    const compMonthStr = compDateObj.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    document.getElementById('card-completion').textContent = `Expected completion: ${compMonthStr}`;
+
+    // 4. Installments & Payments calculation
+    const courseFeeInfo = course.fees?.[currency] || course.fees?.['USD'] || { amount: 6000, display: '$6,000', installments: [] };
+    const totalCourseAmount = courseFeeInfo.amount || 0;
+    const installments = courseFeeInfo.installments || [];
+
+    document.getElementById('card-total-paid').textContent = formatCurrency(totalPaid);
+    
+    const paidInstallmentsCount = payments.length;
+    
+    const installmentSchedule = installments.map((ins, index) => {
+      let insAmount = ins.amount || 0;
+      let status = 'upcoming';
+      let statusClass = 'badge-upcoming';
+      let statusLabel = 'Upcoming';
+      let isDone = false;
+
+      if (index < paidInstallmentsCount) {
+        status = 'paid';
+        statusClass = 'badge-paid';
+        statusLabel = 'Paid';
+        isDone = true;
+        if (payments[index]) {
+          insAmount = payments[index].amount;
+        }
+      } else if (index === paidInstallmentsCount) {
+        status = 'due';
+        statusClass = 'badge-pending';
+        statusLabel = 'Due Soon';
+      } else {
+        status = 'upcoming';
+        statusClass = 'badge-upcoming';
+        statusLabel = 'Upcoming';
+      }
+
+      const insDateObj = new Date(student.created_at || '2025-01-20');
+      insDateObj.setMonth(insDateObj.getMonth() + (index * 6));
+      const insDateStr = insDateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+      return {
+        label: ins.label,
+        amount: insAmount,
+        display: formatCurrency(insAmount),
+        dateStr: insDateStr,
+        dateObj: insDateObj,
+        status,
+        statusClass,
+        statusLabel,
+        isDone
+      };
+    });
+
+    document.getElementById('card-paid-desc').textContent = `${paidInstallmentsCount} of ${installments.length} instalments paid`;
+
+    const balanceRemaining = Math.max(0, totalCourseAmount - totalPaid);
+    document.getElementById('card-balance-due').textContent = formatCurrency(balanceRemaining);
+
+    let nextDueInstallment = installmentSchedule.find(ins => ins.status !== 'paid');
+    if (nextDueInstallment) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const diffDays = Math.ceil((nextDueInstallment.dateObj - today) / (1000 * 60 * 60 * 24));
+      let nextDueSub = `Next due: ${nextDueInstallment.dateStr}`;
+      document.getElementById('card-balance-due-sub').textContent = nextDueSub;
+    } else {
+      document.getElementById('card-balance-due-sub').textContent = 'Fully Paid · No balance due';
+    }
+
+    // 5. Enrolment Details
+    document.getElementById('detail-program').textContent = course.title || student.course;
+    
+    const rawCategory = course.category || 'Business';
+    const categoryLabel = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
+    document.getElementById('detail-category').textContent = categoryLabel;
+    
+    const enrollDateFormatted = new Date(student.created_at || '2025-01-20').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    document.getElementById('detail-enrolled-date').textContent = enrollDateFormatted;
+
+    // 6. Fee Payment History table
+    const receiptsTbody = document.getElementById('receipts-tbody');
+    if (payments.length === 0) {
+      receiptsTbody.innerHTML = '<tr><td colspan="6"><div class="empty-state">No payment receipts found.</div></td></tr>';
+      document.getElementById('receipts-total-paid').textContent = formatCurrency(0);
+    } else {
+      receiptsTbody.innerHTML = payments.map((p, i) => {
+        const pDate = new Date(p.timestamp || Date.now()).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        const pCurrency = p.currency || 'USD';
+        const pSymbol = pCurrency === 'INR' ? '₹' : '$';
+        const formattedAmt = pCurrency === 'INR' ? pSymbol + Number(p.amount).toLocaleString('en-IN') : pSymbol + Number(p.amount).toLocaleString('en-US');
+        const pMethod = p.method || 'Online Payment';
+        const cleanReceiptNo = `RCP-${new Date(p.timestamp).getFullYear()}-${(i+1).toString().padStart(3, '0')}`;
+        const desc = `Semester ${i+1} Fee Payment`;
+
+        return `
+          <tr>
+            <td><strong style="font-family:var(--font-heading); color:var(--navy)">${cleanReceiptNo}</strong></td>
+            <td>${desc} — ${esc(p.course)}</td>
+            <td>${pDate}</td>
+            <td>${esc(pMethod)}</td>
+            <td class="amount-paid">${formattedAmt}</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="badge badge-paid">Paid</span>
+                <button onclick="printReceipt('${cleanReceiptNo}', '${desc}', '${pDate}', '${esc(pMethod)}', '${formattedAmt}')" style="background:transparent; border:none; color:var(--navy); cursor:pointer; display:flex; align-items:center; gap:4px; font-family:var(--font-heading); font-size:12px; font-weight:700;" class="no-print">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"/></svg>
+                  Print
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      document.getElementById('receipts-total-paid').textContent = formatCurrency(totalPaid);
+    }
+
+    // 7. Remaining Instalment Schedule card
+    const outstandingCount = installments.length - paidInstallmentsCount;
+    document.getElementById('schedule-summary-title').textContent = `${outstandingCount} instalment${outstandingCount !== 1 ? 's' : ''} outstanding · Programme total: ${formatCurrency(totalCourseAmount)}`;
+
+    const progressPercent = Math.min(100, Math.round((totalPaid / totalCourseAmount) * 100));
+    document.getElementById('progress-bar-fill').style.width = `${progressPercent}%`;
+    document.getElementById('progress-paid-label').innerHTML = `<strong>${formatCurrency(totalPaid)}</strong> paid`;
+    document.getElementById('progress-percent-label').textContent = `${progressPercent}% complete`;
+    document.getElementById('progress-remaining-label').innerHTML = `<strong>${formatCurrency(balanceRemaining)}</strong> remaining`;
+
+    const scheduleTbody = document.getElementById('schedule-tbody');
+    scheduleTbody.innerHTML = installmentSchedule.map((ins, index) => {
+      let daysLeftStr = '—';
+      let actionBtn = '';
+      if (ins.status !== 'paid') {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diff = Math.ceil((ins.dateObj - today) / (1000 * 60 * 60 * 24));
+        if (diff > 0) {
+          daysLeftStr = `<span class="days-left">${diff} days left</span>`;
+        } else if (diff === 0) {
+          daysLeftStr = '<span class="days-left" style="color:var(--red)">Due today</span>';
+        } else {
+          daysLeftStr = '<span class="days-left" style="color:var(--red)">Overdue</span>';
+        }
+
+        // Add Pay Now button next to the first unpaid installment row
+        if (index === paidInstallmentsCount) {
+          actionBtn = `<button onclick="payInstallment(${ins.amount}, '${esc(ins.label)}', '${currency}')" style="background:var(--red); color:#fff; border:none; border-radius:6px; padding:6px 12px; font-family:var(--font-heading); font-size:12px; font-weight:700; letter-spacing:0.04em; cursor:pointer; margin-left:12px; transition: background 0.2s;" onmouseover="this.style.background='var(--red-hover)'" onmouseout="this.style.background='var(--red)'">Pay Now</button>`;
+        }
+      } else {
+        daysLeftStr = '<span class="badge badge-paid">Done</span>';
+      }
+
+      const rowBgStyle = ins.status === 'due' ? ' style="background: rgba(200,16,46,0.02)"' : '';
+
+      return `
+        <tr${rowBgStyle}>
+          <td><span class="inst-number${ins.isDone ? ' done' : ''}">${index + 1}</span></td>
+          <td><strong>${ins.dateStr}</strong></td>
+          <td>${esc(ins.label)} — ${esc(student.course)}</td>
+          <td class="${ins.isDone ? 'amount-paid' : (ins.status === 'due' ? 'amount-due' : 'amount-upcoming')}">${ins.display}</td>
+          <td>${daysLeftStr}</td>
+          <td>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+              <span class="badge ${ins.statusClass}">${ins.statusLabel}</span>
+              ${actionBtn}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    document.getElementById('schedule-balance-remaining').textContent = formatCurrency(balanceRemaining);
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /* Modal functions */
+  function openReceiptModal() {
+    if (!window.currentDashboardData) {
+      alert('Loading data, please try again in a moment.');
+      return;
+    }
+    const payments = window.currentDashboardData.payments || [];
+    if (payments.length === 0) {
+      alert('No paid receipts available to download.');
+      return;
+    }
+    
+    const receiptList = document.getElementById('receipt-select-list');
+    receiptList.innerHTML = '';
+    
+    payments.forEach((p, i) => {
+      const pDate = new Date(p.timestamp || Date.now()).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      const pCurrency = p.currency || 'USD';
+      const pSymbol = pCurrency === 'INR' ? '₹' : '$';
+      const formattedAmt = pCurrency === 'INR' ? pSymbol + Number(p.amount).toLocaleString('en-IN') : pSymbol + Number(p.amount).toLocaleString('en-US');
+      const cleanReceiptNo = `RCP-${new Date(p.timestamp).getFullYear()}-${(i+1).toString().padStart(3, '0')}`;
+      const desc = `Semester ${i+1} Fee Payment`;
+      const pMethod = p.method || 'Online Payment';
+      
+      const btn = document.createElement('button');
+      btn.className = 'receipt-option-btn';
+      btn.innerHTML = `
+        <div>
+          <div class="btn-title">${desc}</div>
+          <div class="btn-sub">${cleanReceiptNo} • ${pDate}</div>
+        </div>
+        <div class="btn-amount">${formattedAmt}</div>
+      `;
+      btn.onclick = () => {
+        closeReceiptModal();
+        printReceipt(cleanReceiptNo, desc, pDate, pMethod, formattedAmt);
+      };
+      receiptList.appendChild(btn);
+    });
+    
+    document.getElementById('receipt-modal').classList.add('open');
+  }
+
+  function closeReceiptModal() {
+    document.getElementById('receipt-modal').classList.remove('open');
+  }
+
+  /* Printable receipt print trigger */
+  function printReceipt(receiptNo, description, date, method, amount) {
+    const student = window.currentDashboardData ? window.currentDashboardData.student : {};
+    
+    document.getElementById('print-receipt-no').textContent = receiptNo;
+    document.getElementById('print-student-name').textContent = student.name || document.getElementById('side-name').textContent;
+    document.getElementById('print-student-id').textContent = document.getElementById('side-id').textContent;
+    document.getElementById('print-student-email').textContent = student.email || '';
+    
+    document.getElementById('print-receipt-date').textContent = date;
+    document.getElementById('print-payment-method').textContent = method;
+    
+    document.getElementById('print-item-desc').textContent = description;
+    document.getElementById('print-item-course').textContent = document.getElementById('detail-program').textContent;
+    document.getElementById('print-item-amount').textContent = amount;
+    document.getElementById('print-total-amount').textContent = amount;
+    
+    window.print();
+  }
+
+  /* Installment checkout flow */
+  async function payInstallment(amount, description, currency) {
+    if (!RAZORPAY_KEY_ID) {
+      await loadRazorpayKey();
+      if (!RAZORPAY_KEY_ID) {
+        alert('Configuration error: Razorpay Key ID is not loaded yet. Please try again.');
+        return;
+      }
+    }
+    
+    if (!window.currentDashboardData) {
+      alert('Dashboard data not loaded yet.');
+      return;
+    }
+    
+    const student = window.currentDashboardData.student;
+    const amountSubunits = Math.round(amount * 100);
+    
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: amountSubunits,
+      currency: currency,
+      name: 'IMBS',
+      description: `${student.course} - ${description}`,
+      prefill: {
+        name: student.name,
+        email: student.email,
+        contact: student.phone || ''
+      },
+      theme: { color: '#C8102E' },
+      handler: async function (response) {
+        try {
+          const res = await fetch('api.php?action=save_payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              payment_id: response.razorpay_payment_id,
+              name: student.name,
+              email: student.email,
+              phone: student.phone || '',
+              course: student.course,
+              amount: amount,
+              currency: currency
+            })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.error || 'Server error');
+          
+          alert('Installment Payment Successful!');
+          await loadDashboard();
+        } catch (err) {
+          alert('Payment was recorded but verification failed. Please contact support with reference: ' + response.razorpay_payment_id);
+        }
+      }
+    };
+    
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  }
+
+  // Initial trigger
+  loadDashboard();
+</script>
+</body>
+</html>

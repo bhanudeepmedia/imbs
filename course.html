@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="IMBS Only Pic Logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" id="meta-description" content="Explore IMBS internationally accredited online programs designed for working professionals.">
+  <title id="page-title">Course | IMBS</title>
+
+  <!-- Schema.org JSON-LD — populated by JS -->
+  <script type="application/ld+json" id="schema-jsonld">{}</script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Lenis CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="styles.css?v=6">
+
+  <!-- GSAP & Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+  <!-- Razorpay Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    /* ================================================================
+       COURSE PAGE — Page-Specific Styles
+    ================================================================ */
+
+    /* Loading / Error State */
+    .page-loader {
+      position: fixed;
+      inset: 0;
+      background: var(--deep-navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .page-loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .loader-ring {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-state {
+      min-height: 70vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      gap: 16px;
+    }
+    .error-state h2 {
+      font-size: 32px;
+      color: var(--navy);
+    }
+    .error-state p {
+      color: #666;
+      font-size: 16px;
+    }
+
+    /* ---- HERO ---- */
+    .course-hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--deep-navy) 0%, var(--navy) 100%);
+      padding-top: var(--header-height);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .course-hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(200,16,46,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .course-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .course-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      padding: 80px 0;
+      width: 100%;
+    }
+    .course-hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      z-index: 2;
+    }
+    .course-hero-left .overline-label {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .course-hero-h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 54px;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 16px;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .course-hero-tagline {
+      font-family: var(--font-body);
+      font-size: 17px;
+      color: var(--text-hero-sub);
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 540px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .course-hero-ctas {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    /* Glassmorphic Stats Panel */
+    .course-hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--border-radius-md);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .course-stat-block {
+      background: rgba(255,255,255,0.04);
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: background 0.2s ease;
+    }
+    .course-stat-block:hover {
+      background: rgba(255,255,255,0.07);
+    }
+    .course-stat-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--red);
+      flex-shrink: 0;
+    }
+    .course-stat-val {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+    .course-stat-lbl {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    /* Hero Right — Image Panel */
+    .course-hero-right {
+      position: relative;
+      height: 520px;
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateX(40px) scale(0.97);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+    }
+    .course-hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .course-hero-img-fallback {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--navy) 0%, rgba(200,16,46,0.3) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 40px;
+    }
+    .course-hero-img-fallback svg {
+      width: 80px;
+      height: 80px;
+      color: rgba(255,255,255,0.2);
+    }
+    .course-hero-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(17,29,74,0.6) 0%, rgba(200,16,46,0.15) 100%);
+    }
+    .course-code-badge {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      background: var(--red);
+      color: var(--white);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 16px;
+      border-radius: 4px;
+    }
+
+    /* ---- COURSE DETAILS GRID ---- */
+    .course-details-section {
+      background: var(--white);
+      padding: 80px 0;
+    }
+    .course-highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .highlight-card {
+      background: var(--off-white);
+      border: 1px solid var(--light-grey);
+      border-radius: var(--border-radius-md);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .highlight-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--red);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .highlight-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      border-color: rgba(200,16,46,0.2);
+    }
+    .highlight-card:hover::before {
+      transform: scaleX(1);
+    }
+    .highlight-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(200,16,46,0.08);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .highlight-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--red);
+    }
+    .highlight-label {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #888;
+    }
+    .highlight-value {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--navy);
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    /* ---- OVERVIEW / TARGETS ---- */
+    .course-overview-section {
+      background: linear-gradient(135deg, var(--deep-navy) 0%, var(--navy) 100%);
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .course-overview-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .course-overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .course-overview-desc {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--text-hero-sub);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    .course-targets-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .course-target-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--border-radius-sm);
+      backdrop-filter: blur(8px);
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .course-target-item:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(200,16,46,0.3);
+    }
+    .course-target-bullet {
+      width: 22px;
+      height: 22px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .course-target-bullet svg {
+      width: 10px;
+      height: 10px;
+      color: var(--white);
+    }
+    .course-target-text {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-hero-sub);
+      line-height: 1.5;
+    }
+
+    /* Outcomes column */
+    .course-outcomes-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .course-outcome-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-hero-sub);
+      line-height: 1.5;
+    }
+    .course-outcome-item::before {
+      content: '→';
+      color: var(--red);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ---- CURRICULUM ACCORDION ---- */
+    .course-curriculum-section {
+      background: var(--white);
+      padding: 100px 0;
+    }
+    .curriculum-intro {
+      max-width: 680px;
+      margin: 0 auto 60px auto;
+      text-align: center;
+    }
+    .curriculum-intro p {
+      font-size: 16px;
+      color: #666;
+      line-height: 1.7;
+      margin-top: 16px;
+    }
+
+    /* Semester Group Wrapper */
+    .curriculum-semester {
+      margin-bottom: 32px;
+      border: 1px solid var(--light-grey);
+      border-radius: var(--border-radius-md);
+      overflow: hidden;
+    }
+    .curriculum-semester-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px;
+      background: var(--navy);
+      cursor: pointer;
+      user-select: none;
+    }
+    .curriculum-semester-header:hover {
+      background: var(--deep-navy);
+    }
+    .curriculum-semester-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .semester-badge {
+      background: var(--red);
+      color: var(--white);
+      font-size: 11px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      letter-spacing: 0.08em;
+    }
+    .curriculum-semester-toggle {
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 300;
+      transition: transform 0.3s ease, background 0.2s ease;
+      flex-shrink: 0;
+    }
+    .curriculum-semester.open .curriculum-semester-toggle {
+      transform: rotate(45deg);
+      background: var(--red);
+      border-color: var(--red);
+    }
+    .curriculum-semester-body {
+      overflow: hidden;
+      height: 0;
+    }
+    .curriculum-semester.open .curriculum-semester-body {
+      height: auto;
+    }
+
+    /* Module item inside semester */
+    .curriculum-module {
+      border-top: 1px solid var(--light-grey);
+    }
+    .curriculum-module:first-child {
+      border-top: none;
+    }
+    .curriculum-module-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 28px;
+      cursor: pointer;
+      background: var(--white);
+      transition: background 0.2s ease;
+    }
+    .curriculum-module-header:hover {
+      background: var(--off-white);
+    }
+    .curriculum-module-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+    }
+    .module-number {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: rgba(28,47,110,0.15);
+      font-weight: 700;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 40px;
+      text-align: right;
+    }
+    .module-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .module-topic-count {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: #999;
+      margin-top: 3px;
+    }
+    .curriculum-module-toggle {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--light-grey);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+      font-size: 16px;
+      font-weight: 300;
+      transition: transform 0.3s ease, background 0.2s ease, border-color 0.2s ease;
+      flex-shrink: 0;
+    }
+    .curriculum-module.open .curriculum-module-toggle {
+      transform: rotate(45deg);
+      background: var(--red);
+      border-color: var(--red);
+      color: var(--white);
+    }
+    .curriculum-module-body {
+      overflow: hidden;
+      height: 0;
+    }
+    .curriculum-module.open .curriculum-module-body {
+      height: auto;
+    }
+    .curriculum-topics-list {
+      list-style: none;
+      padding: 8px 28px 24px calc(28px + 40px + 16px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #FAFAFA;
+    }
+    .curriculum-topic-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+    .curriculum-topic-item::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ---- FEES SECTION ---- */
+    .course-fees-section {
+      background: linear-gradient(135deg, var(--deep-navy) 0%, var(--navy) 100%);
+      padding: 100px 0;
+    }
+    .fees-currency-toggle {
+      display: flex;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50px;
+      padding: 4px;
+      gap: 0;
+      width: fit-content;
+      margin: 0 auto 48px auto;
+    }
+    .fees-toggle-btn {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.5);
+      padding: 10px 28px;
+      border-radius: 50px;
+      transition: background 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+    }
+    .fees-toggle-btn.active {
+      background: var(--red);
+      color: var(--white);
+    }
+    .fees-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    .fees-total-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--border-radius-lg);
+      padding: 48px 40px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+    .fees-total-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--red);
+    }
+    .fees-total-label {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .fees-total-amount {
+      font-family: var(--font-display);
+      font-size: 64px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .fees-total-note {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    .fees-installments-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--border-radius-sm);
+      overflow: hidden;
+    }
+    .fees-installment-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-family: var(--font-heading);
+    }
+    .fees-installment-row:last-child {
+      border-bottom: none;
+    }
+    .fees-installment-label {
+      font-size: 15px;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .fees-installment-amount {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .fees-cta-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+    }
+    .fees-disclaimer {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* Fees Right: career pathways */
+    .fees-right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .career-pathways-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--border-radius-md);
+      padding: 32px;
+    }
+    .career-pathways-card h3 {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .career-pathways-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .career-pathways-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-hero-sub);
+    }
+    .career-pathways-item::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      background: var(--red);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ---- FAQ SECTION ---- */
+    .course-faq-section {
+      background: var(--white);
+      padding: 100px 0;
+    }
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--light-grey);
+    }
+    .faq-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      cursor: pointer;
+      gap: 20px;
+    }
+    .faq-question {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      flex: 1;
+      text-align: left;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .faq-icon {
+      font-size: 24px;
+      color: var(--navy);
+      font-weight: 300;
+      transition: transform 0.3s ease, color 0.2s ease;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+      color: var(--red);
+    }
+    .faq-body {
+      overflow: hidden;
+      height: 0;
+    }
+    .faq-item.open .faq-body {
+      height: auto;
+    }
+    .faq-answer {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-dark);
+      line-height: 1.7;
+      padding: 0 0 24px 0;
+      opacity: 0.85;
+    }
+
+    /* ---- LEAD FORM / CTA SECTION ---- */
+    .course-lead-section {
+      background: linear-gradient(135deg, var(--deep-navy) 0%, var(--navy) 100%);
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .course-lead-section::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(200,16,46,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .course-lead-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .course-lead-left h2 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 48px;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .course-lead-left p {
+      font-size: 16px;
+      color: var(--text-hero-sub);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .course-lead-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .course-lead-feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-heading);
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .course-lead-feature::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Lead Form Card */
+    .course-lead-form-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--border-radius-lg);
+      padding: 48px 40px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+    }
+    .course-lead-form-card h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--white);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .course-lead-form-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+    .lead-form-group {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .lead-form-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding: 8px 0;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 15px;
+      outline: none;
+      transition: border-bottom-color 0.3s;
+    }
+    .lead-form-input:focus {
+      border-bottom-color: var(--red);
+    }
+    .lead-form-input::placeholder { color: transparent; }
+    .lead-form-label {
+      position: absolute;
+      left: 0;
+      top: 8px;
+      color: var(--text-muted);
+      font-size: 15px;
+      pointer-events: none;
+      transition: transform 0.3s ease, font-size 0.3s ease, color 0.3s ease;
+    }
+    .lead-form-input:focus ~ .lead-form-label,
+    .lead-form-input:not(:placeholder-shown) ~ .lead-form-label {
+      transform: translateY(-20px) scale(0.8);
+      transform-origin: left;
+      color: var(--red);
+    }
+    .lead-form-select {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding: 8px 0;
+      color: rgba(255,255,255,0.6);
+      font-family: var(--font-body);
+      font-size: 15px;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      transition: border-bottom-color 0.3s, color 0.2s;
+    }
+    .lead-form-select:focus {
+      border-bottom-color: var(--red);
+      color: var(--white);
+    }
+    .lead-form-select option {
+      background: var(--navy);
+      color: var(--white);
+    }
+    .lead-form-success {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .lead-form-success .success-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(39,174,96,0.15);
+      border: 2px solid rgba(39,174,96,0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .lead-form-success .success-icon svg {
+      width: 28px;
+      height: 28px;
+      color: #27AE60;
+    }
+    .lead-form-success h4 {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      color: var(--white);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .lead-form-success p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media screen and (max-width: 1024px) {
+      .course-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 60px 0;
+      }
+      .course-hero-right {
+        height: 360px;
+        transform: translateY(20px) scale(0.97);
+      }
+      .course-hero-h1 { font-size: 40px; }
+      .course-highlights-grid { grid-template-columns: repeat(2, 1fr); }
+      .course-overview-grid { grid-template-columns: 1fr; gap: 40px; }
+      .fees-grid { grid-template-columns: 1fr; }
+      .fees-total-amount { font-size: 48px; }
+      .course-lead-grid { grid-template-columns: 1fr; gap: 40px; }
+      .course-lead-left h2 { font-size: 36px; }
+    }
+
+    @media screen and (max-width: 768px) {
+      .course-hero-h1 { font-size: 32px; }
+      .course-hero-stats { grid-template-columns: 1fr 1fr; }
+      .course-highlights-grid { grid-template-columns: 1fr 1fr; }
+      .curriculum-semester-header { padding: 16px 20px; }
+      .curriculum-module-header { padding: 16px 20px; }
+      .curriculum-topics-list { padding-left: 20px; }
+      .course-lead-form-card { padding: 32px 24px; }
+      .module-number { display: none; }
+    }
+
+    @media screen and (max-width: 480px) {
+      .course-hero-stats { grid-template-columns: 1fr; }
+      .course-highlights-grid { grid-template-columns: 1fr; }
+      .course-hero-ctas { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="page-loader">
+    <div class="loader-ring"></div>
+  </div>
+
+  <!-- ============================================================
+       NAVIGATION (identical to index.html)
+  ============================================================ -->
+  <nav class="navbar theme-warm" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="IMBS Home">
+        <img src="Logo Warm Theme.png" alt="IMBS Logo" class="nav-logo-img">
+      </a>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+        <li class="nav-item"><a href="accreditations.html" class="nav-link">Recognition</a></li>
+        <li class="nav-item nav-item-dropdown">
+          <a href="index.html#programs" class="nav-link">Programs <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <div class="mega-menu">
+            <a href="category.html?category=doctorate" class="mega-menu-item">
+              <span class="mega-menu-title">Doctorate <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Prestigious DBA and PhD pathways for executives.</span>
+            </a>
+            <a href="category.html?category=masters" class="mega-menu-item">
+              <span class="mega-menu-title">Post Graduate <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Global MBA and Master of Science specialisations.</span>
+            </a>
+            <a href="category.html?category=graduation" class="mega-menu-item">
+              <span class="mega-menu-title">Graduate <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">BBA and Bachelor of Management structures.</span>
+            </a>
+            <a href="category.html?category=diploma" class="mega-menu-item">
+              <span class="mega-menu-title">Diploma <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Fast-track foundational professional skill diplomas.</span>
+            </a>
+            <a href="category.html?category=adv-diploma" class="mega-menu-item">
+              <span class="mega-menu-title">Adv. Diploma <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Advanced skill deep-dives for working professionals.</span>
+            </a>
+            <a href="category.html?category=pg-diploma" class="mega-menu-item">
+              <span class="mega-menu-title">PG Diploma <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Highly demanded post-graduate level management tools.</span>
+            </a>
+            <a href="category.html?category=mdp" class="mega-menu-item">
+              <span class="mega-menu-title">MDP <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Short-term management development programs.</span>
+            </a>
+            <a href="category.html?category=certification" class="mega-menu-item">
+              <span class="mega-menu-title">Certificate <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Micro-credentials and specialized certifications.</span>
+            </a>
+          </div>
+        </li>
+        <li class="nav-item"><a href="admissions.html" class="nav-link">Admissions</a></li>
+        <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn btn-outline-white" onclick="document.getElementById('course-lead-section').scrollIntoView({behavior:'smooth'})">Download Brochure</button>
+        <button class="btn btn-primary-red" onclick="document.getElementById('course-lead-section').scrollIntoView({behavior:'smooth'})">Talk to an Advisor</button>
+        <a href="login.html" class="btn-student-login" aria-label="Student Login">
+          <svg class="student-login-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 6.5L12 11l10-4.5L12 2z" />
+            <path d="M6 8.3v3.7c0 1.5 2 3 6 3s6-1.5 6-3.7V8.3" />
+            <circle cx="12" cy="12.5" r="2.5" />
+            <path d="M18 20.5a6 6 0 0 0-12 0" />
+          </svg>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle Navigation Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Overlay -->
+  <div class="mobile-menu-overlay theme-warm" id="mobile-menu-overlay">
+    <ul class="mobile-menu-list">
+      <li><a href="about.html" class="mobile-menu-link">About</a></li>
+      <li><a href="accreditations.html" class="mobile-menu-link">Recognition</a></li>
+      <li><a href="programs-list.html" class="mobile-menu-link">Programs</a></li>
+      <li><a href="admissions.html" class="mobile-menu-link">Admissions</a></li>
+      <li><a href="blog.html" class="mobile-menu-link">Blog</a></li>
+      <li><a href="contact.html" class="mobile-menu-link">Contact</a></li>
+    </ul>
+    <div class="mobile-menu-actions">
+      <a href="login.html" class="btn btn-outline-white" style="display:block;margin-bottom:10px;text-align:center;">Student Login</a>
+      <button class="btn btn-outline-white" onclick="document.getElementById('course-lead-section').scrollIntoView({behavior:'smooth'})">Download Brochure</button>
+      <button class="btn btn-primary-red" onclick="document.getElementById('course-lead-section').scrollIntoView({behavior:'smooth'})">Talk to an Advisor</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MAIN CONTENT — Dynamically Populated
+  ============================================================ -->
+  <main id="course-main" style="display:none;">
+
+    <!-- 1. HERO -->
+    <section class="course-hero" id="course-hero">
+      <div class="container course-hero-grid">
+        <!-- Left -->
+        <div class="course-hero-left">
+          <span class="overline-label" id="hero-category-label">Loading...</span>
+          <h1 class="course-hero-h1" id="hero-title">—</h1>
+          <p class="course-hero-tagline" id="hero-tagline">—</p>
+          <div class="course-hero-ctas">
+            <button class="btn btn-primary-red" onclick="document.getElementById('course-lead-section').scrollIntoView({behavior:'smooth'})">Apply Now</button>
+            <button class="btn btn-outline-white" onclick="document.getElementById('course-curriculum-section').scrollIntoView({behavior:'smooth'})">View Curriculum</button>
+          </div>
+          <!-- Glassmorphic Stats -->
+          <div class="course-hero-stats" id="hero-stats">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <!-- Right: Banner Image -->
+        <div class="course-hero-right" id="course-hero-right">
+          <div class="course-hero-img-fallback" id="hero-img-fallback">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2zm0 13.5L4.82 12.2 12 15.5l7.18-3.3L12 15.5z"/></svg>
+          </div>
+          <div class="course-hero-img-overlay"></div>
+          <span class="course-code-badge" id="hero-code-badge">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. HIGHLIGHTS GRID -->
+    <section class="course-details-section" id="course-details-section">
+      <div class="container">
+        <div class="course-highlights-grid" id="course-highlights-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. OVERVIEW & TARGETS -->
+    <section class="course-overview-section" id="course-overview-section">
+      <div class="container course-overview-grid">
+        <!-- Left: Description + Targets -->
+        <div>
+          <span class="overline-label reveal-up">Who This Is For</span>
+          <h2 class="section-title-white reveal-up" id="overview-section-title" style="font-size:40px;">Program Overview</h2>
+          <p class="course-overview-desc reveal-up" id="overview-description">—</p>
+          <ul class="course-targets-list reveal-up" id="overview-targets-list">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+        <!-- Right: Outcomes -->
+        <div>
+          <span class="overline-label reveal-up">What You Will Achieve</span>
+          <h2 class="section-title-white reveal-up" style="font-size:40px;">Learning Outcomes</h2>
+          <ul class="course-outcomes-list reveal-up" id="outcomes-list">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. CURRICULUM -->
+    <section class="course-curriculum-section" id="course-curriculum-section">
+      <div class="container">
+        <div class="curriculum-intro reveal-up">
+          <span class="overline-label">Curriculum</span>
+          <h2 class="section-title-dark" style="font-size:40px; text-align:center;">What You Will Study</h2>
+          <p id="curriculum-intro-text">Explore our carefully structured curriculum spanning core modules and practical applications.</p>
+        </div>
+        <div id="curriculum-accordion">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. FEES -->
+    <section class="course-fees-section" id="course-fees-section">
+      <div class="container">
+        <div style="text-align:center; margin-bottom:48px;" class="reveal-up">
+          <span class="overline-label">Investment</span>
+          <h2 class="section-title-white" style="font-size:40px;">Flexible Fee Structure</h2>
+        </div>
+        <!-- Currency Toggle -->
+        <div class="fees-currency-toggle reveal-up">
+          <button class="fees-toggle-btn active" id="fees-inr-btn" onclick="switchCurrency('INR')">INR ₹</button>
+          <button class="fees-toggle-btn" id="fees-usd-btn" onclick="switchCurrency('USD')">USD $</button>
+        </div>
+        <div class="fees-grid reveal-up">
+          <!-- Left: Total + Installments -->
+          <div class="fees-total-card">
+            <div class="fees-total-label">Total Program Fee</div>
+            <div class="fees-total-amount" id="fees-total-amount">—</div>
+            <div class="fees-total-note" id="fees-total-note">Payable in convenient installments</div>
+            <ul class="fees-installments-list" id="fees-installments-list">
+              <!-- Populated by JS -->
+            </ul>
+            <div class="fees-cta-wrap">
+              <button class="btn btn-primary-red" id="enroll-now-btn" style="width:100%;">Enroll Now</button>
+              <p class="fees-disclaimer" id="fees-disclaimer-note">EMI options and scholarships may be available. Contact us for details.</p>
+            </div>
+          </div>
+          <!-- Right: Career Pathways -->
+          <div class="fees-right-panel">
+            <div class="career-pathways-card">
+              <h3>Career Pathways</h3>
+              <ul class="career-pathways-list" id="career-pathways-list">
+                <!-- Populated by JS -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. FAQ -->
+    <section class="course-faq-section" id="course-faq-section">
+      <div class="container">
+        <div style="text-align:center; margin-bottom:60px;" class="reveal-up">
+          <span class="overline-label">FAQ</span>
+          <h2 class="section-title-dark" style="font-size:40px;">Frequently Asked Questions</h2>
+        </div>
+        <div class="faq-list reveal-up" id="faq-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. LEAD FORM -->
+    <section class="course-lead-section" id="course-lead-section">
+      <div class="container course-lead-grid">
+        <!-- Left: Copy -->
+        <div class="course-lead-left reveal-up">
+          <span class="overline-label">Get Started</span>
+          <h2>Ready to Begin Your<br>Academic Journey?</h2>
+          <p>Speak with our enrollment advisors, request a brochure, or submit your application. Our team responds within 24 hours.</p>
+          <ul class="course-lead-features">
+            <li class="course-lead-feature">100% Online &amp; Flexible Learning</li>
+            <li class="course-lead-feature">Internationally Accredited Credentials</li>
+            <li class="course-lead-feature">Study Materials Delivered in 10 Days</li>
+            <li class="course-lead-feature">Dedicated Advisor Support</li>
+          </ul>
+        </div>
+        <!-- Right: Form -->
+        <div class="course-lead-form-card reveal-up" id="lead-form-card">
+          <h3>Request Information</h3>
+          <p>Fill in your details and an IMBS enrollment advisor will contact you within 24 hours.</p>
+          <form id="course-lead-form">
+            <div class="lead-form-group">
+              <input type="text" class="lead-form-input" id="lead-name" name="name" placeholder=" " required autocomplete="name">
+              <label class="lead-form-label" for="lead-name">Full Name</label>
+            </div>
+            <div class="lead-form-group">
+              <input type="email" class="lead-form-input" id="lead-email" name="email" placeholder=" " required autocomplete="email">
+              <label class="lead-form-label" for="lead-email">Email Address</label>
+            </div>
+            <div class="lead-form-group">
+              <input type="tel" class="lead-form-input" id="lead-phone" name="phone" placeholder=" " required autocomplete="tel">
+              <label class="lead-form-label" for="lead-phone">Phone / WhatsApp</label>
+            </div>
+            <div class="lead-form-group">
+              <input type="text" class="lead-form-input" id="lead-city" name="city" placeholder=" " autocomplete="address-level2">
+              <label class="lead-form-label" for="lead-city">City / Country</label>
+            </div>
+            <div class="lead-form-group">
+              <select class="lead-form-select" id="lead-inquiry" name="inquiry_type">
+                <option value="" disabled selected>Type of Inquiry</option>
+                <option value="enrollment">Enrollment / Application</option>
+                <option value="brochure">Request Brochure</option>
+                <option value="fees">Fee &amp; Payment Plans</option>
+                <option value="eligibility">Eligibility Query</option>
+                <option value="general">General Information</option>
+              </select>
+            </div>
+            <input type="hidden" id="lead-course-slug" name="course_slug">
+            <input type="hidden" id="lead-course-title" name="course_title">
+            <button type="submit" class="btn btn-primary-red" style="width:100%; margin-top:8px; height:52px;">Submit Inquiry</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Error State (shown if course not found) -->
+  <div id="error-state" style="display:none; padding-top: var(--header-height);">
+    <div class="error-state">
+      <span class="overline-label">404 — Not Found</span>
+      <h2 class="section-title-dark">Course Not Found</h2>
+      <p>The course you're looking for doesn't exist or has been removed.</p>
+      <a href="index.html#programs" class="btn btn-primary-red" style="margin-top:16px;">Browse All Programs</a>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       FOOTER (identical to index.html)
+  ============================================================ -->
+  <footer class="footer watermark-bg" id="contact-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-logo">
+            <img src="IMBS Only Pic Logo.png" alt="IMBS Logo" class="logo-img" style="height: 80px;width:auto;display:block;">
+          </div>
+          <p class="footer-tagline">Ignite. Inspire. Innovate.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social-icon" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+            <a href="#" class="footer-social-icon" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6m4.4 3a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m5-2.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z"/></svg></a>
+            <a href="#" class="footer-social-icon" aria-label="Twitter"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Programs</h3>
+          <ul class="footer-links">
+            <li><a href="category.html?category=doctorate" class="footer-link">Doctorate</a></li>
+            <li><a href="category.html?category=masters" class="footer-link">Post Graduate</a></li>
+            <li><a href="category.html?category=graduation" class="footer-link">Graduate</a></li>
+            <li><a href="category.html?category=diploma" class="footer-link">Diploma</a></li>
+            <li><a href="category.html?category=adv-diploma" class="footer-link">Adv. Diploma</a></li>
+            <li><a href="category.html?category=pg-diploma" class="footer-link">PG Diploma</a></li>
+            <li><a href="category.html?category=mdp" class="footer-link">MDP</a></li>
+            <li><a href="category.html?category=certification" class="footer-link">Certificate</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="about.html" class="footer-link">About IMBS</a></li>
+            <li><a href="accreditations.html" class="footer-link">Accreditations</a></li>
+            <li><a href="admissions.html" class="footer-link">Admissions Process</a></li>
+            <li><a href="partners.html" class="footer-link">Partner Universities</a></li>
+            <li><a href="blog.html" class="footer-link">Blog</a></li>
+            <li><a href="contact.html" class="footer-link">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Contact</h3>
+          <div class="footer-contact-info">
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Hyderabad, India</span>
+            </div>
+            <a href="https://wa.me/[PLACEHOLDER]" target="_blank" rel="noopener" class="whatsapp-link">
+              <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.72 14.12c-.24.69-1.44 1.35-1.98 1.41-.53.06-1.04.28-3.41-.65-2.85-1.12-4.68-4-4.82-4.19-.15-.19-1.18-1.58-1.18-3a3.16 3.16 0 0 1 .98-2.31c.28-.28.62-.35.83-.35.15 0 .31 0 .44.01.14.01.32-.05.5.38.19.46.65 1.58.71 1.71.06.13.1.28.01.46-.09.18-.18.3-.35.49-.17.19-.36.43-.52.58-.18.17-.37.36-.16.72.21.36.94 1.55 2.01 2.5 1.38 1.23 2.54 1.61 2.9 1.79.36.18.57.15.79-.1.21-.24.93-1.08 1.18-1.45.24-.37.49-.31.83-.18.34.13 2.16 1.02 2.53 1.2.37.18.62.27.71.43.09.16.09.93-.15 1.62z"/></svg>
+              Chat on WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2026 IMBS. All Rights Reserved.</span>
+        <span class="footer-designed">Designed & Developed by <a href="https://framenflowmedia.in/" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;">Frame n Flow Media</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="back-to-top" aria-label="Scroll Back to Top">
+    <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+  </button>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // Load Razorpay Key ID dynamically
+    let RAZORPAY_KEY_ID = '';
+    async function loadRazorpayKey() {
+      try {
+        const res = await fetch('api.php?action=get_razorpay_key');
+        if (res.ok) {
+          const data = await res.json();
+          RAZORPAY_KEY_ID = data.key_id;
+        }
+      } catch (e) {
+        console.error('Failed to load Razorpay Key ID:', e);
+      }
+    }
+    loadRazorpayKey();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let lenis;
+    let currentCurrency = 'INR';
+    let courseData = null;
+
+    async function safeFetchJson(apiUrl, fallbackUrl) {
+      try {
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error('Response not OK');
+        const text = await res.text();
+        return JSON.parse(text);
+      } catch (e) {
+        console.warn(`API failed for ${apiUrl}, trying fallback: ${fallbackUrl}`, e);
+        const res = await fetch(fallbackUrl);
+        if (!res.ok) throw new Error('Fallback failed');
+        return await res.json();
+      }
+    }
+
+    // ── Lenis + GSAP init ──────────────────────────────────────────
+    function initAnimations() {
+      if (prefersReducedMotion) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      lenis = new Lenis({ lerp: 0.08, duration: 1.2, smoothWheel: true });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) gsap.globalTimeline.pause();
+        else gsap.globalTimeline.resume();
+      });
+    }
+
+
+
+    // ── Icon SVGs ─────────────────────────────────────────────────
+    const ICONS = {
+      clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      award: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
+      laptop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>`,
+      'graduation-cap': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+      check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    };
+
+    function getIcon(name) {
+      return ICONS[name] || ICONS['award'];
+    }
+
+    // ── Populate Hero ─────────────────────────────────────────────
+    function populateHero(course) {
+      // SEO
+      document.title = `${course.title} | IMBS`;
+      document.getElementById('meta-description').setAttribute('content',
+        `${course.overview?.description?.slice(0, 155) || course.hero?.tagline || 'IMBS Online Program'}`
+      );
+
+      // Schema.org
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": course.title,
+        "description": course.overview?.description || '',
+        "provider": {
+          "@type": "Organization",
+          "name": "IMBS — Institute of Management and Business Studies",
+          "url": window.location.origin
+        },
+        "hasCourseInstance": {
+          "@type": "CourseInstance",
+          "courseMode": "Online",
+          "courseWorkload": `PT${course.hero?.duration?.replace(/\s/g,'') || ''}`,
+          "courseSchedule": {
+            "@type": "Schedule",
+            "repeatFrequency": "Monthly"
+          }
+        },
+        "educationalCredentialAwarded": course.highlights?.find(h => h.label === 'Credential')?.value || course.short_name || '',
+        "url": window.location.href
+      };
+      document.getElementById('schema-jsonld').textContent = JSON.stringify(schema);
+
+      // Hero content
+      const catLabel = (course.category || '').replace(/-/g, ' ').toUpperCase();
+      document.getElementById('hero-category-label').textContent = `${catLabel} · IMBS`;
+      document.getElementById('hero-title').textContent = course.title;
+      document.getElementById('hero-tagline').textContent = course.hero?.tagline || '';
+      document.getElementById('hero-code-badge').textContent = course.code || '';
+
+      // Hero image
+      const CATEGORY_FALLBACK_IMAGES = {
+        'doctorate': 'images/prog_doctorate.png',
+        'masters': 'images/prog_post_graduate.png',
+        'graduation': 'images/prog_graduate.png',
+        'pg-diploma': 'images/prog_pg_diploma.png',
+        'diploma': 'images/prog_diploma.png',
+        'adv-diploma': 'images/prog_adv_diploma.png',
+        'certification': 'images/prog_certificate.png',
+        'mdp': 'images/prog_mdp.png'
+      };
+      
+      const bannerPath = course.hero?.banner_image || CATEGORY_FALLBACK_IMAGES[course.category] || '';
+      if (bannerPath) {
+        const imgFallback = document.getElementById('hero-img-fallback');
+        const img = document.createElement('img');
+        img.className = 'course-hero-img';
+        img.alt = course.title;
+        img.src = bannerPath;
+        img.onerror = () => {
+          const catFallback = CATEGORY_FALLBACK_IMAGES[course.category];
+          if (catFallback && !img.src.includes(catFallback)) {
+            img.src = catFallback;
+          } else {
+            img.style.display = 'none';
+            if (imgFallback) imgFallback.style.display = 'flex';
+          }
+        };
+        if (imgFallback) {
+          imgFallback.parentNode.insertBefore(img, imgFallback);
+          imgFallback.style.display = 'none';
+        }
+      }
+
+      // Stats panel from highlights
+      const statsEl = document.getElementById('hero-stats');
+      const stats = (course.highlights || []).slice(0, 3);
+      statsEl.innerHTML = stats.map(h => `
+        <div class="course-stat-block">
+          <div class="course-stat-icon">${getIcon(h.icon)}</div>
+          <div class="course-stat-val">${h.value}</div>
+          <div class="course-stat-lbl">${h.label}</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Populate Details ──────────────────────────────────────────
+    function populateHighlights(course) {
+      const grid = document.getElementById('course-highlights-grid');
+      grid.innerHTML = (course.highlights || []).map(h => `
+        <div class="highlight-card reveal-up">
+          <div class="highlight-icon">${getIcon(h.icon)}</div>
+          <div class="highlight-label">${h.label}</div>
+          <div class="highlight-value">${h.value}</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Populate Overview ─────────────────────────────────────────
+    function populateOverview(course) {
+      document.getElementById('overview-description').textContent = course.overview?.description || '';
+      const targetsList = document.getElementById('overview-targets-list');
+      targetsList.innerHTML = (course.overview?.targets || []).map(t => `
+        <li class="course-target-item">
+          <div class="course-target-bullet">${ICONS.check}</div>
+          <span class="course-target-text">${t}</span>
+        </li>
+      `).join('');
+
+      const outcomesList = document.getElementById('outcomes-list');
+      outcomesList.innerHTML = (course.outcomes || []).map(o => `
+        <li class="course-outcome-item">${o}</li>
+      `).join('');
+    }
+
+    // ── Populate Curriculum ───────────────────────────────────────
+    function populateCurriculum(course) {
+      const modules = course.curriculum || [];
+      if (!modules.length) {
+        document.getElementById('course-curriculum-section').style.display = 'none';
+        return;
+      }
+
+      // Derive semester groupings from installments
+      const installments = course.fees?.INR?.installments || [];
+      const semCount = installments.length || 1;
+      const perSem = Math.ceil(modules.length / semCount);
+
+      // Group modules into semesters
+      const semesters = [];
+      for (let i = 0; i < semCount; i++) {
+        const semModules = modules.slice(i * perSem, (i + 1) * perSem);
+        if (semModules.length) {
+          semesters.push({
+            label: installments[i]?.label || `Semester ${i + 1}`,
+            modules: semModules
+          });
+        }
+      }
+
+      const container = document.getElementById('curriculum-accordion');
+      container.innerHTML = semesters.map((sem, si) => `
+        <div class="curriculum-semester${si === 0 ? ' open' : ''}" data-sem="${si}">
+          <div class="curriculum-semester-header" onclick="toggleSemester(${si})">
+            <div class="curriculum-semester-title">
+              <span class="semester-badge">${sem.label}</span>
+              ${sem.modules.length} Module${sem.modules.length > 1 ? 's' : ''}
+            </div>
+            <span class="curriculum-semester-toggle">+</span>
+          </div>
+          <div class="curriculum-semester-body">
+            ${sem.modules.map((mod, mi) => `
+              <div class="curriculum-module${si === 0 && mi === 0 ? ' open' : ''}" data-mod="${si}-${mi}">
+                <div class="curriculum-module-header" onclick="toggleModule('${si}-${mi}')">
+                  <div class="curriculum-module-info">
+                    <span class="module-number">${String(mod.module || (mi+1)).padStart(2,'0')}</span>
+                    <div>
+                      <div class="module-title">${mod.title}</div>
+                      <div class="module-topic-count">${(mod.topics || []).length} Topics</div>
+                    </div>
+                  </div>
+                  <span class="curriculum-module-toggle">+</span>
+                </div>
+                <div class="curriculum-module-body">
+                  <ul class="curriculum-topics-list">
+                    ${(mod.topics || []).map(t => `<li class="curriculum-topic-item">${t}</li>`).join('')}
+                  </ul>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      // Animate open semester body on first render
+      semesters.forEach((_, si) => {
+        if (si === 0) {
+          const semEl = container.querySelector(`[data-sem="0"]`);
+          const bodyEl = semEl?.querySelector('.curriculum-semester-body');
+          if (bodyEl) bodyEl.style.height = 'auto';
+          const firstMod = semEl?.querySelector('[data-mod="0-0"] .curriculum-module-body');
+          if (firstMod) firstMod.style.height = 'auto';
+        }
+      });
+    }
+
+    window.toggleSemester = function(idx) {
+      const el = document.querySelector(`.curriculum-semester[data-sem="${idx}"]`);
+      if (!el) return;
+      const body = el.querySelector('.curriculum-semester-body');
+      const isOpen = el.classList.contains('open');
+      if (isOpen) {
+        if (!prefersReducedMotion) {
+          gsap.to(body, { height: 0, duration: 0.4, ease: 'power2.inOut' });
+        } else { body.style.height = '0'; }
+        el.classList.remove('open');
+      } else {
+        el.classList.add('open');
+        if (!prefersReducedMotion) {
+          gsap.fromTo(body, { height: 0 }, { height: 'auto', duration: 0.5, ease: 'power2.out' });
+        } else { body.style.height = 'auto'; }
+      }
+    };
+
+    window.toggleModule = function(id) {
+      const el = document.querySelector(`.curriculum-module[data-mod="${id}"]`);
+      if (!el) return;
+      const body = el.querySelector('.curriculum-module-body');
+      const isOpen = el.classList.contains('open');
+      if (isOpen) {
+        if (!prefersReducedMotion) {
+          gsap.to(body, { height: 0, duration: 0.3, ease: 'power2.inOut' });
+        } else { body.style.height = '0'; }
+        el.classList.remove('open');
+      } else {
+        // close siblings
+        el.parentNode.querySelectorAll('.curriculum-module.open').forEach(other => {
+          if (other !== el) {
+            const otherBody = other.querySelector('.curriculum-module-body');
+            if (!prefersReducedMotion) {
+              gsap.to(otherBody, { height: 0, duration: 0.3, ease: 'power2.inOut' });
+            } else { otherBody.style.height = '0'; }
+            other.classList.remove('open');
+          }
+        });
+        el.classList.add('open');
+        if (!prefersReducedMotion) {
+          gsap.fromTo(body, { height: 0 }, { height: 'auto', duration: 0.35, ease: 'power2.out' });
+        } else { body.style.height = 'auto'; }
+      }
+    };
+
+    // ── Populate Fees ─────────────────────────────────────────────
+    function populateFees(course) {
+      const fees = course.fees?.[currentCurrency];
+      if (!fees) { document.getElementById('course-fees-section').style.display = 'none'; return; }
+
+      document.getElementById('fees-total-amount').textContent = fees.display || '—';
+      const list = document.getElementById('fees-installments-list');
+      list.innerHTML = (fees.installments || []).map(ins => `
+        <li class="fees-installment-row">
+          <span class="fees-installment-label">${ins.label}</span>
+          <span class="fees-installment-amount">${ins.display}</span>
+        </li>
+      `).join('');
+
+      const pathways = document.getElementById('career-pathways-list');
+      pathways.innerHTML = (course.career_pathways || []).map(p => `
+        <li class="career-pathways-item">${p}</li>
+      `).join('');
+    }
+
+    window.switchCurrency = function(currency) {
+      currentCurrency = currency;
+      document.getElementById('fees-inr-btn').classList.toggle('active', currency === 'INR');
+      document.getElementById('fees-usd-btn').classList.toggle('active', currency === 'USD');
+      if (courseData) populateFees(courseData);
+    };
+
+    // ── Populate FAQs ─────────────────────────────────────────────
+    function populateFAQs(course) {
+      const faqs = course.faqs || [];
+      if (!faqs.length) { document.getElementById('course-faq-section').style.display = 'none'; return; }
+      const list = document.getElementById('faq-list');
+      list.innerHTML = faqs.map((faq, i) => `
+        <div class="faq-item${i === 0 ? ' open' : ''}" data-faq="${i}">
+          <div class="faq-header" onclick="toggleFAQ(${i})">
+            <button class="faq-question" aria-expanded="${i === 0}">${faq.question}</button>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-body"${i === 0 ? ' style="height:auto;"' : ''}>
+            <p class="faq-answer">${faq.answer}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.toggleFAQ = function(idx) {
+      const items = document.querySelectorAll('.faq-item');
+      items.forEach((item, i) => {
+        const body = item.querySelector('.faq-body');
+        const isThis = i === idx;
+        const isOpen = item.classList.contains('open');
+        if (isThis && !isOpen) {
+          item.classList.add('open');
+          if (!prefersReducedMotion) {
+            gsap.fromTo(body, { height: 0 }, { height: 'auto', duration: 0.35, ease: 'power2.out' });
+          } else { body.style.height = 'auto'; }
+          item.querySelector('.faq-question')?.setAttribute('aria-expanded', 'true');
+        } else if (!isThis && isOpen) {
+          item.classList.remove('open');
+          if (!prefersReducedMotion) {
+            gsap.to(body, { height: 0, duration: 0.3, ease: 'power2.inOut' });
+          } else { body.style.height = '0'; }
+          item.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false');
+        }
+      });
+    };
+
+    // ── Lead Form ─────────────────────────────────────────────────
+    function setupLeadForm(course) {
+      document.getElementById('lead-course-slug').value = course.slug || '';
+      document.getElementById('lead-course-title').value = course.title || '';
+
+      const form = document.getElementById('course-lead-form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('[type="submit"]');
+        const name        = document.getElementById('lead-name').value.trim();
+        const email       = document.getElementById('lead-email').value.trim();
+        const phone       = document.getElementById('lead-phone').value.trim();
+        const city        = document.getElementById('lead-city').value.trim();
+        const inquiryType = document.getElementById('lead-inquiry').value;
+        const courseSlug  = document.getElementById('lead-course-slug').value;
+        const courseTitle = document.getElementById('lead-course-title').value;
+
+        if (inquiryType === 'enrollment') {
+          launchRazorpay({ btn, name, email, phone, course });
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+
+        const payload = {
+          name, email, phone, city,
+          inquiry_type: inquiryType,
+          course_slug: courseSlug,
+          course_title: courseTitle,
+          source: 'course_page'
+        };
+
+        try {
+          const res = await fetch('api.php?action=save_lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error('Server error');
+          showLeadSuccess(email);
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = 'Submit Inquiry';
+          alert('Something went wrong. Please try again or contact us via WhatsApp.');
+        }
+      });
+    }
+
+    // ── Razorpay Checkout ─────────────────────────────────────────
+    async function launchRazorpay({ btn, name, email, phone, course }) {
+      if (!RAZORPAY_KEY_ID) {
+        await loadRazorpayKey();
+      }
+      if (!RAZORPAY_KEY_ID) {
+        alert('Payment gateway key is not loaded yet. Please try again in a few seconds or contact us via WhatsApp.');
+        btn.disabled = false;
+        btn.textContent = 'Submit Inquiry';
+        return;
+      }
+
+      const currency = currentCurrency || 'INR';
+      const feeDetails = course?.fees?.[currency];
+      if (!feeDetails) {
+        alert(`Fee details are not available for currency: ${currency}`);
+        btn.disabled = false;
+        btn.textContent = 'Submit Inquiry';
+        return;
+      }
+
+      const amountUnits = feeDetails.amount || 0;
+      const amountSubunits = Math.round(amountUnits * 100);
+
+      btn.disabled = true;
+      btn.textContent = 'Opening Payment…';
+
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: amountSubunits,
+        currency: currency,
+        name: 'IMBS',
+        description: course.title || 'Course Enrollment',
+        prefill: { name, email, contact: phone },
+        theme: { color: '#C8102E' },
+        handler: async function (response) {
+          btn.textContent = 'Confirming…';
+          try {
+            const res = await fetch('api.php?action=save_payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                payment_id: response.razorpay_payment_id,
+                name,
+                email,
+                phone,
+                course: course.title || '',
+                amount: amountUnits,
+                currency: currency
+              })
+            });
+            if (!res.ok) throw new Error('Server error');
+            showPaymentSuccess(email, response.razorpay_payment_id);
+          } catch (err) {
+            btn.disabled = false;
+            btn.textContent = 'Submit Inquiry';
+            alert('Payment received but confirmation failed. Please contact us with your Payment ID: ' + response.razorpay_payment_id);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            btn.disabled = false;
+            btn.textContent = 'Submit Inquiry';
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    }
+
+    function showPaymentSuccess(email, paymentId) {
+      const card = document.getElementById('lead-form-card');
+      card.innerHTML = `
+        <div class="lead-form-success">
+          <div class="success-icon">
+            ${ICONS.check}
+          </div>
+          <h4>Enrollment Confirmed!</h4>
+          <p>Your payment was successful. A welcome email with your login credentials has been sent to <strong>${email}</strong>.</p>
+          <p style="margin-top:12px; font-size:12px; color:var(--text-muted);">Payment ID: ${paymentId}</p>
+        </div>
+      `;
+    }
+
+    function showLeadSuccess(email) {
+      const card = document.getElementById('lead-form-card');
+      card.innerHTML = `
+        <div class="lead-form-success">
+          <div class="success-icon">
+            ${ICONS.check}
+          </div>
+          <h4>Inquiry Received!</h4>
+          <p>Thank you for reaching out. Our enrollment team will contact you at <strong>${email}</strong> within 24 hours.</p>
+          <button class="btn btn-outline-white" style="margin-top:24px;" onclick="window.location.reload()">Submit Another Inquiry</button>
+        </div>
+      `;
+    }
+
+    // ── Hero Animations ───────────────────────────────────────────
+    function runHeroAnimations() {
+      if (prefersReducedMotion) return;
+      const tl = gsap.timeline({ delay: 0.2 });
+      tl.fromTo('.navbar', { y: -60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' })
+        .fromTo('#hero-category-label', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.1')
+        .fromTo('.course-hero-h1', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.2')
+        .fromTo('.course-hero-tagline', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.2')
+        .fromTo('.course-hero-ctas', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.1')
+        .fromTo('.course-hero-stats', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.2')
+        .fromTo('#course-hero-right', { x: 40, opacity: 0, scale: 0.96 }, { x: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out' }, '<-=0.3');
+
+      // Scroll-triggered reveal
+      gsap.utils.toArray('.reveal-up').forEach(el => {
+        gsap.fromTo(el, { y: 50, opacity: 0 }, {
+          y: 0, opacity: 1, duration: 0.8, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 82%', once: true }
+        });
+      });
+
+      // Stagger highlight cards
+      ScrollTrigger.create({
+        trigger: '#course-details-section',
+        start: 'top 75%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo('.highlight-card', { y: 30, opacity: 0 }, {
+            y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power2.out'
+          });
+        }
+      });
+
+      // Target items stagger
+      ScrollTrigger.create({
+        trigger: '#course-overview-section',
+        start: 'top 75%',
+        once: true,
+        onEnter: () => {
+          gsap.fromTo('.course-target-item', { x: -20, opacity: 0 }, {
+            x: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out'
+          });
+          gsap.fromTo('.course-outcome-item', { x: 20, opacity: 0 }, {
+            x: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out'
+          });
+        }
+      });
+
+      // Navbar scroll color
+      ScrollTrigger.create({
+        start: 'top -80px',
+        onUpdate: updateNavbarScroll
+      });
+
+      ScrollTrigger.refresh();
+    }
+
+    // ── Main Load ─────────────────────────────────────────────────
+    async function loadCourse() {
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get('slug');
+
+      if (!slug) {
+        showError();
+        return;
+      }
+
+      try {
+        const courses = await safeFetchJson('api.php?action=get_courses', 'data/courses.json');
+        const course = courses.find(c => c.slug === slug);
+
+        if (!course) {
+          showError();
+          return;
+        }
+
+        courseData = course;
+
+        const enrollBtn = document.getElementById('enroll-now-btn');
+        if (enrollBtn) {
+          enrollBtn.addEventListener('click', () => {
+            window.location.href = `checkout.html?slug=${course.slug || course.id}`;
+          });
+        }
+
+        populateHero(course);
+        populateHighlights(course);
+        populateOverview(course);
+        populateCurriculum(course);
+        populateFees(course);
+        populateFAQs(course);
+        setupLeadForm(course);
+
+        document.getElementById('course-main').style.display = 'block';
+        document.getElementById('page-loader').classList.add('hidden');
+
+        initAnimations();
+        runHeroAnimations();
+
+      } catch (err) {
+        showError();
+      }
+    }
+
+    function showError() {
+      document.getElementById('page-loader').classList.add('hidden');
+      document.getElementById('error-state').style.display = 'block';
+    }
+
+    // Start
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCourse();
+    });
+
+  })();
+  </script>
+  <script src="app.js?v=13"></script>
+</body>
+</html>

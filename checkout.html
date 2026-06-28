@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enrollment Checkout — IMBS</title>
+
+  <!-- Typography & CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- Razorpay Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    :root {
+      --navy:       #1C2F6E;
+      --deep-navy:  #111D4A;
+      --red:        #C8102E;
+      --red-hover:  #A00D24;
+      --white:      #FFFFFF;
+      --off-white:  #FCFAF2; /* Locked off-white/warm default */
+      --light-grey: #E8E8E8;
+      --text-dark:  #333333;
+      --text-muted: #6B7A99;
+      --border-color:#E4E5E0;
+      
+      --font-display: 'Playfair Display', serif;
+      --font-heading: 'Barlow Condensed', sans-serif;
+      --font-body:    'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--off-white);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .checkout-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+    }
+
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1.5px solid var(--border-color);
+      padding-bottom: 20px;
+    }
+
+    .brand-logo {
+      height: 48px;
+      display: block;
+    }
+
+    .back-btn {
+      text-decoration: none;
+      color: var(--navy);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .back-btn:hover {
+      color: var(--red);
+    }
+
+    /* ── Main panel ── */
+    .form-panel {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--off-white);
+      padding-bottom: 8px;
+    }
+
+    /* Fields */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .field.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    input, select {
+      height: 50px;
+      padding: 0 16px;
+      border: 1.5px solid var(--light-grey);
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #FAFAFA;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--navy);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(28,47,110,0.1);
+    }
+
+    /* Payment Options */
+    .options-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .option-card {
+      border: 2px solid var(--light-grey);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .option-card:hover {
+      border-color: var(--navy);
+      background: #FAFBFD;
+    }
+
+    .option-card.selected {
+      border-color: var(--red);
+      background: rgba(200,16,46,0.02);
+    }
+
+    .option-radio {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--red);
+      cursor: pointer;
+    }
+
+    .option-info {
+      flex: 1;
+    }
+
+    .option-title {
+      font-weight: 700;
+      color: var(--navy);
+      font-size: 15px;
+    }
+
+    .option-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .option-price {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 54px;
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: var(--red-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(200,16,46,0.3);
+    }
+
+    .submit-btn:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ── Summary panel ── */
+    .summary-panel {
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 14px;
+      padding: 36px;
+      align-self: start;
+      position: sticky;
+      top: 40px;
+    }
+
+    .summary-title {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      padding-bottom: 12px;
+    }
+
+    .course-summary-card {
+      margin-bottom: 28px;
+    }
+
+    .course-summary-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    .summary-meta-item {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .summary-meta-item strong {
+      color: var(--white);
+    }
+
+    .currency-switcher {
+      display: inline-flex;
+      background: rgba(255,255,255,0.1);
+      padding: 4px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+    }
+
+    .currency-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .currency-btn.active {
+      background: var(--white);
+      color: var(--navy);
+    }
+
+    .order-totals {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .total-row.grand {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--white);
+      border-top: 1.5px dashed rgba(255,255,255,0.2);
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+
+    .total-price-val {
+      color: var(--red);
+      font-size: 26px;
+    }
+
+    /* Success Card */
+    .success-container {
+      grid-column: 1 / -1;
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      padding: 60px 40px;
+      text-align: center;
+      max-width: 600px;
+      margin: 40px auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(40,167,69,0.1);
+      color: #28a745;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .success-heading {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .success-text {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .credentials-box {
+      background: var(--off-white);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px 24px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .cred-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .cred-row:last-child { margin-bottom: 0; }
+
+    .btn-portal {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 52px;
+      padding: 0 32px;
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 8px;
+      text-decoration: none;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: background 0.2s;
+    }
+
+    .btn-portal:hover {
+      background: var(--muted-navy);
+    }
+
+    @media (max-width: 850px) {
+      .checkout-container {
+        grid-template-columns: 1fr;
+      }
+      .summary-panel {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="checkout-container" id="checkout-root">
+  
+  <!-- Header -->
+  <header>
+    <a href="index.html">
+      <img src="Logo Warm Theme.png" alt="IMBS Logo" class="brand-logo">
+    </a>
+    <a href="javascript:history.back()" class="back-btn">
+      &larr; Back to Program
+    </a>
+  </header>
+
+  <!-- Left: Checkout Form -->
+  <div class="form-panel" id="form-panel-container">
+    <h2 class="section-title">Student Information</h2>
+    <form id="checkout-form" novalidate>
+      <div class="form-grid">
+        <div class="field full-width">
+          <label for="student-name">Full Name</label>
+          <input type="text" id="student-name" required placeholder="e.g. Arjun Anand">
+        </div>
+        <div class="field">
+          <label for="student-email">Email Address</label>
+          <input type="email" id="student-email" required placeholder="e.g. arjun@example.com">
+        </div>
+        <div class="field">
+          <label for="student-phone">Phone / WhatsApp Number</label>
+          <input type="tel" id="student-phone" required placeholder="e.g. +91 9999999999">
+        </div>
+        <div class="field full-width">
+          <label for="student-city">City &amp; Country</label>
+          <input type="text" id="student-city" required placeholder="e.g. Hyderabad, India">
+        </div>
+      </div>
+
+      <h2 class="section-title">Select Payment Option</h2>
+      <div class="options-group" id="payment-options-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <button type="submit" class="submit-btn" id="btn-submit-payment">Proceed to Payment</button>
+    </form>
+  </div>
+
+  <!-- Right: Sticky Order Summary -->
+  <div class="summary-panel" id="summary-panel-container">
+    <h3 class="summary-title">Enrollment Summary</h3>
+    
+    <div class="course-summary-card">
+      <h4 class="course-summary-title" id="summary-course-title">Loading Program...</h4>
+      <div class="summary-meta-item">Duration: <strong id="summary-course-duration">—</strong></div>
+      <div class="summary-meta-item">Eligibility: <strong id="summary-course-eligibility">—</strong></div>
+    </div>
+
+    <div class="summary-meta-item" style="margin-bottom:12px;">Choose Currency:</div>
+    <div class="currency-switcher">
+      <button class="currency-btn active" id="btn-curr-inr" onclick="switchCheckoutCurrency('INR')">INR ₹</button>
+      <button class="currency-btn" id="btn-curr-usd" onclick="switchCheckoutCurrency('USD')">USD $</button>
+    </div>
+
+    <div class="order-totals">
+      <div class="total-row">
+        <span>Payment Option:</span>
+        <strong id="summary-payment-label">—</strong>
+      </div>
+      <div class="total-row grand">
+        <span>Amount Payable:</span>
+        <strong class="total-price-val" id="summary-payable-amount">—</strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  'use strict';
+
+  // Load configuration and Razorpay Key ID
+  let RAZORPAY_KEY_ID = '';
+  async function loadRazorpayKey() {
+    try {
+      const res = await fetch('api.php?action=get_razorpay_key');
+      if (res.ok) {
+        const data = await res.json();
+        RAZORPAY_KEY_ID = data.key_id;
+      }
+    } catch (e) {
+      console.error('Failed to load Razorpay Key ID:', e);
+    }
+  }
+  loadRazorpayKey();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const courseSlug = urlParams.get('slug') || '';
+  
+  let currentCurrency = 'INR';
+  let courseData = null;
+  let selectedOption = 'full'; // 'full' or installment index (e.g. 0, 1, 2)
+  let selectedAmount = 0;
+
+  async function initCheckout() {
+    if (!courseSlug) {
+      alert('Error: No program selected.');
+      window.location.href = 'index.html';
+      return;
+    }
+
+    try {
+      const res = await fetch('api.php?action=get_courses');
+      if (!res.ok) throw new Error('API failed');
+      const courses = await res.json();
+      
+      courseData = courses.find(c => c.slug === courseSlug || c.id === courseSlug);
+      if (!courseData) {
+        throw new Error('Program not found');
+      }
+
+      // Populate Program Details
+      document.getElementById('summary-course-title').textContent = courseData.title;
+      document.getElementById('summary-course-duration').textContent = courseData.hero?.duration || '24 Months';
+      document.getElementById('summary-course-eligibility').textContent = courseData.hero?.eligibility || 'Any Graduation';
+
+      // Check if USD fees are missing to disable USD tab
+      if (!courseData.fees?.USD) {
+        document.getElementById('btn-curr-usd').style.display = 'none';
+      }
+
+      renderPaymentOptions();
+    } catch (e) {
+      console.error(e);
+      alert('Failed to load program information. Reverting to homepage.');
+      window.location.href = 'index.html';
+    }
+  }
+
+  function renderPaymentOptions() {
+    if (!courseData) return;
+    const fees = courseData.fees?.[currentCurrency];
+    if (!fees) return;
+
+    const symbol = currentCurrency === 'INR' ? '₹' : '$';
+    const container = document.getElementById('payment-options-container');
+    container.innerHTML = '';
+
+    // Option 1: Full Payment
+    const fullOption = document.createElement('div');
+    fullOption.className = `option-card ${selectedOption === 'full' ? 'selected' : ''}`;
+    fullOption.onclick = () => selectPaymentOption('full', fees.amount);
+
+    fullOption.innerHTML = `
+      <input type="radio" class="option-radio" name="payment_opt" ${selectedOption === 'full' ? 'checked' : ''}>
+      <div class="option-info">
+        <div class="option-title">Pay Full Program Fee</div>
+        <div class="option-desc">Complete your enrollment with a single full payment.</div>
+      </div>
+      <div class="option-price">${symbol}${Number(fees.amount).toLocaleString()}</div>
+    `;
+    container.appendChild(fullOption);
+
+    // Option 2: Installments (if available)
+    if (fees.installments && fees.installments.length > 0) {
+      fees.installments.forEach((ins, idx) => {
+        const insOption = document.createElement('div');
+        insOption.className = `option-card ${selectedOption === idx ? 'selected' : ''}`;
+        insOption.onclick = () => selectPaymentOption(idx, ins.amount);
+
+        insOption.innerHTML = `
+          <input type="radio" class="option-radio" name="payment_opt" ${selectedOption === idx ? 'checked' : ''}>
+          <div class="option-info">
+            <div class="option-title">Pay ${ins.label}</div>
+            <div class="option-desc">Semester-wise installment payment plan.</div>
+          </div>
+          <div class="option-price">${symbol}${Number(ins.amount).toLocaleString()}</div>
+        `;
+        container.appendChild(insOption);
+      });
+    }
+
+    // Default amount selection if not set
+    if (selectedOption === 'full') {
+      selectedAmount = fees.amount;
+    } else {
+      selectedAmount = fees.installments[selectedOption]?.amount || fees.amount;
+    }
+
+    updateSummaryDetails();
+  }
+
+  function selectPaymentOption(opt, amount) {
+    selectedOption = opt;
+    selectedAmount = amount;
+    
+    // Update active visual classes
+    const cards = document.querySelectorAll('.option-card');
+    cards.forEach((card, idx) => {
+      const radio = card.querySelector('.option-radio');
+      if (opt === 'full' && idx === 0) {
+        card.classList.add('selected');
+        radio.checked = true;
+      } else if (opt !== 'full' && idx === (opt + 1)) {
+        card.classList.add('selected');
+        radio.checked = true;
+      } else {
+        card.classList.remove('selected');
+        radio.checked = false;
+      }
+    });
+
+    updateSummaryDetails();
+  }
+
+  function switchCheckoutCurrency(currency) {
+    currentCurrency = currency;
+    document.getElementById('btn-curr-inr').classList.toggle('active', currency === 'INR');
+    document.getElementById('btn-curr-usd').classList.toggle('active', currency === 'USD');
+    
+    // Keep option selections but refresh details
+    renderPaymentOptions();
+  }
+
+  function updateSummaryDetails() {
+    const symbol = currentCurrency === 'INR' ? '₹' : '$';
+    
+    let optLabel = 'Full Program Fee';
+    if (selectedOption !== 'full') {
+      const fees = courseData.fees?.[currentCurrency];
+      optLabel = fees?.installments?.[selectedOption]?.label || 'Installment';
+    }
+
+    document.getElementById('summary-payment-label').textContent = optLabel;
+    document.getElementById('summary-payable-amount').textContent = `${symbol}${Number(selectedAmount).toLocaleString()}`;
+  }
+
+  // ── Form Submission & Razorpay ───────────────────────────
+  const form = document.getElementById('checkout-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('student-name').value.trim();
+    const email = document.getElementById('student-email').value.trim();
+    const phone = document.getElementById('student-phone').value.trim();
+    const city = document.getElementById('student-city').value.trim();
+
+    if (!name || !email || !phone || !city) {
+      alert('Please fill out all fields.');
+      return;
+    }
+
+    if (!RAZORPAY_KEY_ID) {
+      await loadRazorpayKey();
+      if (!RAZORPAY_KEY_ID) {
+        alert('Configuration error: Razorpay Key ID is not loaded yet. Please try again.');
+        return;
+      }
+    }
+
+    const submitBtn = document.getElementById('btn-submit-payment');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Opening Payment Gateway...';
+
+    const amountSubunits = Math.round(selectedAmount * 100);
+
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: amountSubunits,
+      currency: currentCurrency,
+      name: 'IMBS',
+      description: `${courseData.title} - ${selectedOption === 'full' ? 'Full Fee' : 'Installment'}`,
+      prefill: { name, email, contact: phone },
+      theme: { color: '#C8102E' },
+      handler: async function (response) {
+        submitBtn.textContent = 'Confirming Enrollment...';
+        try {
+          const res = await fetch('api.php?action=save_payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              payment_id: response.razorpay_payment_id,
+              name,
+              email,
+              phone,
+              city,
+              course: courseData.title,
+              amount: selectedAmount,
+              currency: currentCurrency
+            })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.error || 'Server error');
+          
+          showEnrollmentSuccess(name, email, response.razorpay_payment_id);
+        } catch (err) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Proceed to Payment';
+          alert('Payment was recorded but verification failed. Please contact admissions with your reference: ' + response.razorpay_payment_id);
+        }
+      },
+      modal: {
+        ondismiss: function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Proceed to Payment';
+        }
+      }
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  });
+
+  // Render dynamic success card
+  async function showEnrollmentSuccess(name, email, paymentId) {
+    // Attempt to query students.json via login api check or direct mock credentials calculation
+    // Welcome email generated a FirstName@4-digits password
+    const firstName = name.split(' ')[0].charAt(0).toUpperCase() + name.split(' ')[0].slice(1).toLowerCase();
+    
+    // We will retrieve the newly created student profile (we can query get_students or compute local text)
+    let tempPass = `${firstName}@1234 (Sample)`;
+    try {
+      const res = await fetch('api.php?action=student_login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: '' }) // blank password gets student if they exist (or we check)
+      });
+      // Just check students list to find temp_password
+      const stRes = await fetch('api.php?action=get_students');
+      if (stRes.ok) {
+        const students = await stRes.json();
+        const matchingStudent = students.find(s => s.email.toLowerCase() === email.toLowerCase());
+        if (matchingStudent && matchingStudent.temp_password) {
+          tempPass = matchingStudent.temp_password;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to retrieve exact temp password', e);
+    }
+
+    const root = document.getElementById('checkout-root');
+    root.innerHTML = `
+      <div class="success-container">
+        <div class="success-icon">
+          <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 class="success-heading">Enrollment Successful!</h2>
+        <p class="success-text">Thank you for enrolling with IMBS. Your payment of <strong>${currentCurrency === 'INR' ? '₹' : '$'}${Number(selectedAmount).toLocaleString()}</strong> was successfully processed. A confirmation email with your login details has been dispatched.</p>
+        
+        <div class="credentials-box">
+          <div style="font-family:var(--font-heading);font-weight:700;color:var(--navy);font-size:14px;margin-bottom:12px;text-transform:uppercase;">Student Portal Credentials</div>
+          <div class="cred-row">
+            <span>Username (Email):</span>
+            <strong>${email}</strong>
+          </div>
+          <div class="cred-row">
+            <span>Temporary Password:</span>
+            <strong>${tempPass}</strong>
+          </div>
+        </div>
+
+        <a href="login.html" class="btn-portal">Sign In to Student Portal</a>
+      </div>
+    `;
+  }
+
+  // Load checkout details
+  initCheckout();
+</script>
+
+</body>
+</html>

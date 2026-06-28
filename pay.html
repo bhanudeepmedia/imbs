@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay Fee Online — IMBS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Razorpay Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    :root {
+      --navy:        #1C2F6E;
+      --deep-navy:   #111D4A;
+      --red:         #C8102E;
+      --red-hover:   #A00D24;
+      --green:       #10B981;
+      --green-hover: #059669;
+      --white:       #FFFFFF;
+      --off-white:   #FCFAF2;
+      --light-grey:  #E8E8E8;
+      --text-dark:   #333333;
+      --text-muted:  #6B7A99;
+      --border-color:#E4E5E0;
+
+      --font-display: 'Playfair Display', serif;
+      --font-heading: 'Barlow Condensed', sans-serif;
+      --font-body:    'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--off-white);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .checkout-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+    }
+
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1.5px solid var(--border-color);
+      padding-bottom: 20px;
+    }
+
+    .brand-logo { height: 48px; display: block; }
+
+    .back-btn {
+      text-decoration: none;
+      color: var(--navy);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--red); }
+
+    /* ── Main form panel ── */
+    .form-panel {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--off-white);
+      padding-bottom: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .field { display: flex; flex-direction: column; }
+    .field.full-width { grid-column: 1 / -1; }
+
+    label {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    label .optional {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      margin-left: 4px;
+    }
+
+    input, select {
+      height: 50px;
+      padding: 0 16px;
+      border: 1.5px solid var(--light-grey);
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #FAFAFA;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--navy);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(28,47,110,0.1);
+    }
+
+    select option { color: var(--text-dark); }
+
+    .submit-btn {
+      width: 100%;
+      height: 54px;
+      background: var(--green);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: var(--green-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16,185,129,0.35);
+    }
+
+    .submit-btn:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ── Summary panel ── */
+    .summary-panel {
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 14px;
+      padding: 36px;
+      align-self: start;
+      position: sticky;
+      top: 40px;
+    }
+
+    .summary-title {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      padding-bottom: 12px;
+    }
+
+    .currency-switcher {
+      display: inline-flex;
+      background: rgba(255,255,255,0.1);
+      padding: 4px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+    }
+
+    .currency-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .currency-btn.active {
+      background: var(--white);
+      color: var(--navy);
+    }
+
+    .order-totals {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .total-row.grand {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--white);
+      border-top: 1.5px dashed rgba(255,255,255,0.2);
+      padding-top: 14px;
+      margin-top: 14px;
+    }
+
+    .total-price-val {
+      color: #34D399;
+      font-size: 26px;
+    }
+
+    .summary-note {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.5;
+      margin-top: 16px;
+    }
+
+    /* ── Success Card ── */
+    .success-container {
+      grid-column: 1 / -1;
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      padding: 60px 40px;
+      text-align: center;
+      max-width: 600px;
+      margin: 40px auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(16,185,129,0.1);
+      color: #10B981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .success-heading {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .success-text {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .credentials-box {
+      background: var(--off-white);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px 24px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .cred-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .cred-row:last-child { margin-bottom: 0; }
+
+    .btn-portal {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 52px;
+      padding: 0 32px;
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 8px;
+      text-decoration: none;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: background 0.2s;
+    }
+
+    .btn-portal:hover { background: #2A3F7E; }
+
+    @media (max-width: 850px) {
+      .checkout-container { grid-template-columns: 1fr; }
+      .summary-panel { position: static; }
+    }
+
+    @media (max-width: 560px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full-width { grid-column: 1; }
+      body { padding: 20px 16px; }
+      .form-panel { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="checkout-container" id="checkout-root">
+
+  <!-- Header -->
+  <header>
+    <a href="index.html">
+      <img src="Logo Warm Theme.png" alt="IMBS Logo" class="brand-logo">
+    </a>
+    <a href="index.html" class="back-btn">&larr; Back to Home</a>
+  </header>
+
+  <!-- Left: Form -->
+  <div class="form-panel" id="form-panel-container">
+    <h2 class="section-title">Pay Fee Online</h2>
+    <form id="pay-form" novalidate>
+
+      <div class="form-grid">
+        <!-- Row 1 -->
+        <div class="field full-width">
+          <label for="pay-name">Full Name *</label>
+          <input type="text" id="pay-name" required placeholder="e.g. Arjun Anand">
+        </div>
+
+        <!-- Row 2 -->
+        <div class="field">
+          <label for="pay-phone">Phone Number *</label>
+          <input type="tel" id="pay-phone" required placeholder="e.g. +91 9999999999">
+        </div>
+        <div class="field">
+          <label for="pay-email">Email ID *</label>
+          <input type="email" id="pay-email" required placeholder="e.g. arjun@example.com">
+        </div>
+
+        <!-- Row 3 -->
+        <div class="field full-width">
+          <label for="pay-location">Location *</label>
+          <input type="text" id="pay-location" required placeholder="e.g. Hyderabad, India">
+        </div>
+
+        <!-- Row 4 -->
+        <div class="field full-width">
+          <label for="pay-counselor">Counselor Name <span class="optional">(optional)</span></label>
+          <input type="text" id="pay-counselor" placeholder="Name of counselor who assisted you">
+        </div>
+
+        <!-- Row 5 -->
+        <div class="field">
+          <label for="pay-category">Select Category *</label>
+          <select id="pay-category" required>
+            <option value="">— Choose Category —</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pay-course">Select Course *</label>
+          <select id="pay-course" required>
+            <option value="">— Choose Course —</option>
+          </select>
+        </div>
+
+        <!-- Row 6 -->
+        <div class="field">
+          <label for="pay-admission-type">Admission Type <span class="optional">(optional)</span></label>
+          <select id="pay-admission-type">
+            <option value="">— Select Type —</option>
+            <option value="New Admission">New Admission</option>
+            <option value="Semester Fee">Semester Fee</option>
+            <option value="Exam Fee">Exam Fee</option>
+            <option value="Late Fee">Late Fee</option>
+            <option value="Other Fee">Other Fee</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pay-enrollment-no">Admission Enrollment No <span class="optional">(optional)</span></label>
+          <input type="text" id="pay-enrollment-no" placeholder="e.g. IMBS-2024-001">
+        </div>
+
+        <!-- Row 7 -->
+        <div class="field full-width">
+          <label for="pay-remarks">Remarks <span class="optional">(optional)</span></label>
+          <input type="text" id="pay-remarks" placeholder="Any additional notes or instructions">
+        </div>
+
+        <!-- Row 8 -->
+        <div class="field full-width">
+          <label for="pay-amount">Pay Amount *</label>
+          <input type="number" id="pay-amount" required min="1" placeholder="Enter amount to pay">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="btn-submit-payment">
+        Proceed to Payment
+      </button>
+    </form>
+  </div>
+
+  <!-- Right: Summary -->
+  <div class="summary-panel">
+    <h3 class="summary-title">Payment Summary</h3>
+
+    <div style="margin-bottom:12px;font-size:13px;color:rgba(255,255,255,0.7);">Choose Currency:</div>
+    <div class="currency-switcher">
+      <button class="currency-btn active" id="btn-curr-inr" onclick="switchPayCurrency('INR')">INR ₹</button>
+      <button class="currency-btn" id="btn-curr-usd" onclick="switchPayCurrency('USD')">USD $</button>
+    </div>
+
+    <div class="order-totals">
+      <div class="total-row">
+        <span>Selected Course:</span>
+        <strong id="summary-course-name" style="color:var(--white);text-align:right;max-width:160px;font-size:13px;">—</strong>
+      </div>
+      <div class="total-row">
+        <span>Payment Type:</span>
+        <strong id="summary-pay-type" style="color:var(--white);">Custom Amount</strong>
+      </div>
+      <div class="total-row grand">
+        <span>Amount Payable:</span>
+        <strong class="total-price-val" id="summary-payable-amount">—</strong>
+      </div>
+    </div>
+
+    <p class="summary-note">
+      All payments are processed securely via Razorpay. You will receive a confirmation email once the payment is successful.
+    </p>
+  </div>
+
+</div>
+
+<script>
+  'use strict';
+
+  let RAZORPAY_KEY_ID = '';
+  let currentCurrency = 'INR';
+  let allCourses = [];
+  let allCategories = [];
+
+  async function init() {
+    await Promise.all([loadRazorpayKey(), loadCategories(), loadCourses()]);
+    populateCategoryDropdown();
+    bindCategoryFilter();
+    bindAmountInput();
+  }
+
+  async function loadRazorpayKey() {
+    try {
+      const res = await fetch('api.php?action=get_razorpay_key');
+      if (res.ok) {
+        const data = await res.json();
+        RAZORPAY_KEY_ID = data.key_id || '';
+      }
+    } catch (e) {
+      console.error('Failed to load Razorpay key:', e);
+    }
+  }
+
+  async function loadCategories() {
+    try {
+      const res = await fetch('api.php?action=get_categories');
+      if (res.ok) allCategories = await res.json();
+    } catch (e) {
+      console.warn('Failed to load categories:', e);
+    }
+  }
+
+  async function loadCourses() {
+    try {
+      const res = await fetch('api.php?action=get_courses');
+      if (res.ok) allCourses = await res.json();
+    } catch (e) {
+      console.warn('Failed to load courses:', e);
+    }
+  }
+
+  function populateCategoryDropdown() {
+    const catSel = document.getElementById('pay-category');
+    catSel.innerHTML = '<option value="">— Choose Category —</option>';
+    allCategories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat.id;
+      opt.textContent = cat.name;
+      catSel.appendChild(opt);
+    });
+  }
+
+  function filterCoursesByCategory(categoryId) {
+    const courseSel = document.getElementById('pay-course');
+    courseSel.innerHTML = '<option value="">— Choose Course —</option>';
+    const filtered = categoryId
+      ? allCourses.filter(c => c.category === categoryId && c.status === 'active')
+      : allCourses.filter(c => c.status === 'active');
+    filtered.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.title;
+      opt.textContent = c.title;
+      courseSel.appendChild(opt);
+    });
+  }
+
+  function bindCategoryFilter() {
+    const catSel = document.getElementById('pay-category');
+    catSel.addEventListener('change', () => {
+      filterCoursesByCategory(catSel.value);
+      document.getElementById('summary-course-name').textContent = '—';
+    });
+
+    document.getElementById('pay-course').addEventListener('change', e => {
+      document.getElementById('summary-course-name').textContent = e.target.value || '—';
+    });
+  }
+
+  function bindAmountInput() {
+    document.getElementById('pay-amount').addEventListener('input', updateSummary);
+  }
+
+  function updateSummary() {
+    const amount = parseFloat(document.getElementById('pay-amount').value) || 0;
+    const symbol = currentCurrency === 'INR' ? '₹' : '$';
+    document.getElementById('summary-payable-amount').textContent =
+      amount > 0 ? `${symbol}${Number(amount).toLocaleString()}` : '—';
+  }
+
+  function switchPayCurrency(currency) {
+    currentCurrency = currency;
+    document.getElementById('btn-curr-inr').classList.toggle('active', currency === 'INR');
+    document.getElementById('btn-curr-usd').classList.toggle('active', currency === 'USD');
+    updateSummary();
+  }
+
+  // ── Form submission ──────────────────────────────────────────────────────────
+  document.getElementById('pay-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name          = document.getElementById('pay-name').value.trim();
+    const phone         = document.getElementById('pay-phone').value.trim();
+    const email         = document.getElementById('pay-email').value.trim();
+    const location      = document.getElementById('pay-location').value.trim();
+    const counselor     = document.getElementById('pay-counselor').value.trim();
+    const category      = document.getElementById('pay-category').value;
+    const course        = document.getElementById('pay-course').value;
+    const admissionType = document.getElementById('pay-admission-type').value;
+    const enrollmentNo  = document.getElementById('pay-enrollment-no').value.trim();
+    const remarks       = document.getElementById('pay-remarks').value.trim();
+    const amount        = parseFloat(document.getElementById('pay-amount').value);
+
+    if (!name || !phone || !email || !location) {
+      alert('Please fill in all required fields: Name, Phone, Email, and Location.');
+      return;
+    }
+    if (!course) {
+      alert('Please select a course.');
+      return;
+    }
+    if (!amount || amount <= 0) {
+      alert('Please enter a valid payment amount.');
+      return;
+    }
+
+    if (!RAZORPAY_KEY_ID) {
+      await loadRazorpayKey();
+      if (!RAZORPAY_KEY_ID) {
+        alert('Configuration error: payment gateway key not loaded. Please refresh and try again.');
+        return;
+      }
+    }
+
+    const submitBtn = document.getElementById('btn-submit-payment');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Opening Payment Gateway…';
+
+    const amountSubunits = Math.round(amount * 100);
+
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: amountSubunits,
+      currency: currentCurrency,
+      name: 'IMBS',
+      description: `${course} — ${admissionType || 'Fee Payment'}`,
+      prefill: { name, email, contact: phone },
+      theme: { color: '#10B981' },
+      handler: async function (response) {
+        submitBtn.textContent = 'Confirming Payment…';
+        try {
+          const res = await fetch('api.php?action=save_payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              payment_id:     response.razorpay_payment_id,
+              name,
+              email,
+              phone,
+              city:           location,
+              course,
+              amount,
+              currency:       currentCurrency,
+              counselor,
+              admission_type: admissionType,
+              enrollment_no:  enrollmentNo,
+              remarks,
+            })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.error || 'Server error');
+          showPaySuccess(name, email, response.razorpay_payment_id, amount);
+        } catch (err) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Proceed to Payment';
+          alert('Payment recorded but confirmation failed. Contact admissions with your reference: ' + response.razorpay_payment_id);
+        }
+      },
+      modal: {
+        ondismiss: function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Proceed to Payment';
+        }
+      }
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  });
+
+  async function showPaySuccess(name, email, paymentId, amount) {
+    const symbol = currentCurrency === 'INR' ? '₹' : '$';
+
+    let tempPass = null;
+    try {
+      const stRes = await fetch('api.php?action=get_students');
+      if (stRes.ok) {
+        const students = await stRes.json();
+        const match = students.find(s => s.email && s.email.toLowerCase() === email.toLowerCase());
+        if (match && match.temp_password) tempPass = match.temp_password;
+      }
+    } catch (e) {
+      console.warn('Could not retrieve student credentials:', e);
+    }
+
+    const credSection = tempPass ? `
+      <div class="credentials-box">
+        <div style="font-family:var(--font-heading);font-weight:700;color:var(--navy);font-size:14px;margin-bottom:12px;text-transform:uppercase;">Student Portal Credentials</div>
+        <div class="cred-row"><span>Username (Email):</span><strong>${escHtml(email)}</strong></div>
+        <div class="cred-row"><span>Temporary Password:</span><strong>${escHtml(tempPass)}</strong></div>
+      </div>
+      <a href="login.html" class="btn-portal" style="margin-bottom:12px;">Sign In to Student Portal</a>
+    ` : '';
+
+    document.getElementById('checkout-root').innerHTML = `
+      <div class="success-container">
+        <div class="success-icon">
+          <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 class="success-heading">Payment Successful!</h2>
+        <p class="success-text">Thank you, <strong>${escHtml(name)}</strong>. Your payment of <strong>${symbol}${Number(amount).toLocaleString()}</strong> has been processed successfully. A confirmation email has been sent to <strong>${escHtml(email)}</strong>.</p>
+        <div class="credentials-box">
+          <div class="cred-row"><span>Payment Reference:</span><strong style="font-size:12px;word-break:break-all;">${escHtml(paymentId)}</strong></div>
+        </div>
+        ${credSection}
+        <a href="index.html" class="btn-portal" style="background:#10B981;">Return to Home</a>
+      </div>
+    `;
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  init();
+</script>
+
+</body>
+</html>
