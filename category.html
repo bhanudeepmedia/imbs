@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" id="meta-description" content="Browse IMBS internationally accredited online programs.">
+  <title id="page-title">Programs | IMBS</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Lenis CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="styles.css?v=6">
+
+  <!-- GSAP & Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+
+  <style>
+    /* ================================================================
+       CATEGORY PAGE — Page-Specific Styles
+    ================================================================ */
+
+    /* Loading State */
+    .page-loader {
+      position: fixed;
+      inset: 0;
+      background: var(--deep-navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .page-loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .loader-ring {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- CATEGORY HERO ---- */
+    .cat-hero {
+      min-height: 60vh;
+      background: linear-gradient(135deg, var(--deep-navy) 0%, var(--navy) 100%);
+      padding-top: calc(var(--header-height) + 60px);
+      padding-bottom: 80px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cat-hero::before {
+      content: '';
+      position: absolute;
+      top: -150px; right: -150px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(200,16,46,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cat-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -80px;
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cat-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      width: 100%;
+    }
+    .cat-hero-left {
+      z-index: 2;
+    }
+    .cat-hero-overline {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .cat-hero-h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 56px;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .cat-hero-overview {
+      font-family: var(--font-body);
+      font-size: 17px;
+      color: var(--text-hero-sub);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .cat-hero-ctas {
+      display: flex;
+      gap: 16px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    /* Benefits panel */
+    .cat-hero-right {
+      z-index: 2;
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    .cat-benefits-panel {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--border-radius-lg);
+      padding: 40px 36px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .cat-benefits-panel h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .cat-benefits-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cat-benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--text-hero-sub);
+      line-height: 1.5;
+    }
+    .cat-benefit-icon {
+      width: 28px;
+      height: 28px;
+      background: rgba(200,16,46,0.15);
+      border: 1px solid rgba(200,16,46,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .cat-benefit-icon svg {
+      width: 12px;
+      height: 12px;
+      color: var(--red);
+    }
+    /* Course count badge */
+    .cat-count-strip {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .cat-count-number {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1;
+    }
+    .cat-count-label {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    /* ---- SEARCH & FILTER BAR ---- */
+    .cat-filter-bar {
+      background: var(--white);
+      padding: 32px 0;
+      border-bottom: 1px solid var(--light-grey);
+      position: sticky;
+      top: var(--header-height);
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .filter-bar-inner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    /* Search box */
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+      max-width: 400px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: #999;
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      height: 46px;
+      padding: 0 16px 0 44px;
+      background: var(--off-white);
+      border: 1px solid var(--light-grey);
+      border-radius: var(--border-radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .search-input::placeholder { color: #aaa; }
+    .search-input:focus {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(28,47,110,0.08);
+    }
+    /* Filter groups */
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-group-label {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      white-space: nowrap;
+    }
+    .filter-tag {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 8px 16px;
+      border-radius: 50px;
+      border: 1px solid var(--light-grey);
+      color: var(--text-dark);
+      background: var(--white);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .filter-tag:hover {
+      border-color: var(--navy);
+      color: var(--navy);
+    }
+    .filter-tag.active {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--white);
+    }
+    .filter-tag.active.red {
+      background: var(--red);
+      border-color: var(--red);
+    }
+    .filter-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--light-grey);
+      flex-shrink: 0;
+    }
+    .filter-clear-btn {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--red);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 8px 4px;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .filter-clear-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .results-count {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    /* ---- COURSES GRID SECTION ---- */
+    .cat-courses-section {
+      background: var(--off-white);
+      padding: 64px 0;
+      min-height: 60vh;
+    }
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    /* Course Card */
+    .course-card {
+      background: var(--white);
+      border: 1px solid #E8E8E8;
+      border-radius: var(--border-radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .course-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border-color: rgba(28,47,110,0.2);
+    }
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--red);
+    }
+    .course-card-img-wrap {
+      height: 160px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--deep-navy) 100%);
+      overflow: hidden;
+      position: relative;
+    }
+    .course-card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .course-card:hover .course-card-img {
+      transform: scale(1.04);
+    }
+    .course-card-img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .course-card-img-placeholder svg {
+      width: 56px;
+      height: 56px;
+      color: rgba(255,255,255,0.15);
+    }
+    .course-card-featured {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--red);
+      color: var(--white);
+      font-family: var(--font-heading);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 50px;
+    }
+    .course-card-body {
+      padding: 24px 24px 0 24px;
+      flex: 1;
+    }
+    .course-card-code {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+    .course-card-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--navy);
+      text-transform: uppercase;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+    .course-card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .course-card-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: #666;
+    }
+    .course-card-meta-item svg {
+      width: 14px;
+      height: 14px;
+      color: var(--red);
+      flex-shrink: 0;
+    }
+    .course-card-meta-item strong {
+      color: var(--navy);
+    }
+    .course-card-price {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .course-card-price-usd {
+      font-size: 13px;
+      color: #888;
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .course-card-footer {
+      padding: 16px 24px 24px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--light-grey);
+      margin-top: 16px;
+    }
+    .course-card-link {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--red);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s ease;
+    }
+    .course-card-link:hover {
+      gap: 10px;
+    }
+    .course-card-link svg {
+      width: 14px;
+      height: 14px;
+      color: var(--red);
+      transition: transform 0.2s ease;
+    }
+    .course-card-link:hover svg {
+      transform: translateX(2px);
+    }
+    .course-card-short {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--navy);
+      background: var(--off-white);
+      border: 1px solid var(--light-grey);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    /* Empty / No results */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .no-results svg {
+      width: 64px;
+      height: 64px;
+      color: #ccc;
+    }
+    .no-results h3 {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      color: var(--navy);
+      text-transform: uppercase;
+    }
+    .no-results p {
+      font-size: 15px;
+      color: #888;
+      max-width: 380px;
+      line-height: 1.6;
+    }
+
+    /* ---- CTA STRIP ---- */
+    .cat-cta-strip {
+      background: var(--red);
+      padding: 56px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background-image: radial-gradient(circle at center, #E51A3B 0%, var(--red) 100%);
+    }
+    .cat-cta-strip::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%);
+      pointer-events: none;
+    }
+    .cat-cta-strip h2 {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .cat-cta-strip p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.9);
+      max-width: 600px;
+      margin: 0 auto 32px auto;
+      line-height: 1.6;
+    }
+    .cat-cta-strip .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media screen and (max-width: 1024px) {
+      .cat-hero-grid { grid-template-columns: 1fr; gap: 40px; }
+      .cat-hero-h1 { font-size: 40px; }
+      .cat-hero-right { transform: translateY(20px); }
+      .courses-grid { grid-template-columns: repeat(2, 1fr); }
+      .filter-bar-inner { gap: 12px; }
+    }
+
+    @media screen and (max-width: 768px) {
+      .cat-hero-h1 { font-size: 32px; }
+      .courses-grid { grid-template-columns: 1fr; }
+      .filter-bar-inner { flex-direction: column; align-items: flex-start; }
+      .search-wrap { max-width: 100%; width: 100%; }
+      .results-count { margin-left: 0; }
+      .filter-group { flex-wrap: wrap; }
+    }
+
+    @media screen and (max-width: 480px) {
+      .cat-hero-ctas { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="page-loader">
+    <div class="loader-ring"></div>
+  </div>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav class="navbar theme-warm" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="IMBS Home">
+        <img src="Logo Warm Theme.png" alt="IMBS Logo" class="nav-logo-img">
+      </a>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+        <li class="nav-item nav-item-dropdown">
+          <a href="index.html#programs" class="nav-link">Programs <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <div class="mega-menu">
+            <a href="category.html?category=doctorate" class="mega-menu-item">
+              <span class="mega-menu-title">Doctorate <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Prestigious DBA and PhD pathways for executives.</span>
+            </a>
+            <a href="category.html?category=masters" class="mega-menu-item">
+              <span class="mega-menu-title">Post Graduate <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Global MBA and Master of Science specialisations.</span>
+            </a>
+            <a href="category.html?category=graduation" class="mega-menu-item">
+              <span class="mega-menu-title">Graduate <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">BBA and Bachelor of Management structures.</span>
+            </a>
+            <a href="category.html?category=diploma" class="mega-menu-item">
+              <span class="mega-menu-title">Diploma <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Fast-track foundational professional skill diplomas.</span>
+            </a>
+            <a href="category.html?category=adv-diploma" class="mega-menu-item">
+              <span class="mega-menu-title">Adv. Diploma <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Advanced skill deep-dives for working professionals.</span>
+            </a>
+            <a href="category.html?category=pg-diploma" class="mega-menu-item">
+              <span class="mega-menu-title">PG Diploma <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Highly demanded post-graduate level management tools.</span>
+            </a>
+            <a href="category.html?category=mdp" class="mega-menu-item">
+              <span class="mega-menu-title">MDP <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Short-term management development programs.</span>
+            </a>
+            <a href="category.html?category=certification" class="mega-menu-item">
+              <span class="mega-menu-title">Certificate <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="mega-menu-desc">Micro-credentials and specialized certifications.</span>
+            </a>
+          </div>
+        </li>
+        <li class="nav-item"><a href="accreditations.html" class="nav-link">Accreditations</a></li>
+        <li class="nav-item"><a href="admissions.html" class="nav-link">Admissions</a></li>
+        <li class="nav-item"><a href="partners.html" class="nav-link">Partner Universities</a></li>
+        <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="index.html#contact-footer" class="btn btn-outline-white">Download Brochure</a>
+        <a href="contact.html" class="btn btn-primary-red">Talk to an Advisor</a>
+        <a href="login.html" class="btn-student-login" aria-label="Student Login">
+          <svg class="student-login-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 6.5L12 11l10-4.5L12 2z" />
+            <path d="M6 8.3v3.7c0 1.5 2 3 6 3s6-1.5 6-3.7V8.3" />
+            <circle cx="12" cy="12.5" r="2.5" />
+            <path d="M18 20.5a6 6 0 0 0-12 0" />
+          </svg>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle Navigation Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Overlay -->
+  <div class="mobile-menu-overlay theme-warm" id="mobile-menu-overlay">
+    <ul class="mobile-menu-list">
+      <li><a href="about.html" class="mobile-menu-link">About</a></li>
+      <li><a href="programs-list.html" class="mobile-menu-link">Programs</a></li>
+      <li><a href="accreditations.html" class="mobile-menu-link">Accreditations</a></li>
+      <li><a href="admissions.html" class="mobile-menu-link">Admissions</a></li>
+      <li><a href="partners.html" class="mobile-menu-link">Partner Universities</a></li>
+      <li><a href="blog.html" class="mobile-menu-link">Blog</a></li>
+      <li><a href="contact.html" class="mobile-menu-link">Contact</a></li>
+    </ul>
+    <div class="mobile-menu-actions">
+      <a href="login.html" class="btn btn-outline-white" style="display:block;margin-bottom:10px;text-align:center;">Student Login</a>
+      <a href="index.html#contact-footer" class="btn btn-outline-white">Download Brochure</a>
+      <a href="index.html#contact-footer" class="btn btn-primary-red">Talk to an Advisor</a>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MAIN CONTENT
+  ============================================================ -->
+  <main id="cat-main" style="display:none;">
+
+    <!-- 1. CATEGORY HERO -->
+    <section class="cat-hero" id="cat-hero">
+      <div class="container cat-hero-grid">
+        <div class="cat-hero-left">
+          <span class="overline-label cat-hero-overline" id="cat-overline">Programs</span>
+          <h1 class="cat-hero-h1" id="cat-title">—</h1>
+          <p class="cat-hero-overview" id="cat-overview">—</p>
+          <div class="cat-hero-ctas">
+            <a href="index.html#contact-footer" class="btn btn-primary-red">Talk to an Advisor</a>
+            <a href="#courses-grid-section" class="btn btn-outline-white" id="explore-btn">Browse Programs</a>
+          </div>
+        </div>
+        <div class="cat-hero-right" id="cat-hero-right">
+          <div class="cat-benefits-panel">
+            <h3>Why This Category</h3>
+            <ul class="cat-benefits-list" id="cat-benefits-list">
+              <!-- Populated by JS -->
+            </ul>
+            <div class="cat-count-strip">
+              <span class="cat-count-number" id="cat-count-number">—</span>
+              <span class="cat-count-label">Programs<br>Available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- 3. COURSES GRID -->
+    <section class="cat-courses-section" id="courses-grid-section">
+      <div class="container">
+        <div class="courses-grid" id="courses-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. CTA STRIP -->
+    <section class="cat-cta-strip">
+      <div class="container">
+        <h2 class="reveal-up">Not Sure Which Program Is Right?</h2>
+        <p class="reveal-up">Our enrollment advisors will guide you to the perfect fit based on your background and career goals.</p>
+        <div class="cta-buttons reveal-up">
+          <a href="index.html#contact-footer" class="btn btn-solid-white">Contact Us</a>
+          <a href="index.html" class="btn btn-outline-white">Explore All Programs</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Error State -->
+  <div id="error-state" style="display:none; padding-top: var(--header-height);">
+    <div style="min-height:60vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px; gap:16px;">
+      <span class="overline-label">Not Found</span>
+      <h2 class="section-title-dark">Category Not Found</h2>
+      <p style="color:#666; font-size:16px;">This category doesn't exist or has been removed.</p>
+      <a href="index.html#programs" class="btn btn-primary-red" style="margin-top:16px;">Browse All Programs</a>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="footer" id="contact-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-logo">
+            <img src="IMBS Transparent Logo.png" alt="IMBS Logo" class="logo-img" style="height:30px;width:auto;display:block;">
+          </div>
+          <p class="footer-tagline">Ignite. Inspire. Innovate.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social-icon" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+            <a href="#" class="footer-social-icon" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6m4.4 3a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m5-2.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z"/></svg></a>
+            <a href="#" class="footer-social-icon" aria-label="Twitter"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Programs</h3>
+          <ul class="footer-links">
+            <li><a href="category.html?category=doctorate" class="footer-link">Doctorate</a></li>
+            <li><a href="category.html?category=masters" class="footer-link">Post Graduate</a></li>
+            <li><a href="category.html?category=graduation" class="footer-link">Graduate</a></li>
+            <li><a href="category.html?category=diploma" class="footer-link">Diploma</a></li>
+            <li><a href="category.html?category=adv-diploma" class="footer-link">Adv. Diploma</a></li>
+            <li><a href="category.html?category=pg-diploma" class="footer-link">PG Diploma</a></li>
+            <li><a href="category.html?category=mdp" class="footer-link">MDP</a></li>
+            <li><a href="category.html?category=certification" class="footer-link">Certificate</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="about.html" class="footer-link">About IMBS</a></li>
+            <li><a href="accreditations.html" class="footer-link">Accreditations</a></li>
+            <li><a href="admissions.html" class="footer-link">Admissions Process</a></li>
+            <li><a href="partners.html" class="footer-link">Partner Universities</a></li>
+            <li><a href="blog.html" class="footer-link">Blog</a></li>
+            <li><a href="contact.html" class="footer-link">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Contact</h3>
+          <div class="footer-contact-info">
+            <div class="contact-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Hyderabad, India</span>
+            </div>
+            <a href="https://wa.me/[PLACEHOLDER]" target="_blank" rel="noopener" class="whatsapp-link">
+              <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.72 14.12c-.24.69-1.44 1.35-1.98 1.41-.53.06-1.04.28-3.41-.65-2.85-1.12-4.68-4-4.82-4.19-.15-.19-1.18-1.58-1.18-3a3.16 3.16 0 0 1 .98-2.31c.28-.28.62-.35.83-.35.15 0 .31 0 .44.01.14.01.32-.05.5.38.19.46.65 1.58.71 1.71.06.13.1.28.01.46-.09.18-.18.3-.35.49-.17.19-.36.43-.52.58-.18.17-.37.36-.16.72.21.36.94 1.55 2.01 2.5 1.38 1.23 2.54 1.61 2.9 1.79.36.18.57.15.79-.1.21-.24.93-1.08 1.18-1.45.24-.37.49-.31.83-.18.34.13 2.16 1.02 2.53 1.2.37.18.62.27.71.43.09.16.09.93-.15 1.62z"/></svg>
+              Chat on WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2026 IMBS. All Rights Reserved.</span>
+        <span class="footer-designed">Designed & Developed by <a href="https://framenflowmedia.in/" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;">Frame n Flow Media</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="back-to-top" aria-label="Scroll Back to Top">
+    <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+  </button>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let lenis;
+    let allCourses = [];    // all courses in category
+    let activeFilters = { mode: '', duration: '', fees: '' };
+    let searchQuery = '';
+
+    async function safeFetchJson(apiUrl, fallbackUrl) {
+      try {
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error('Response not OK');
+        const text = await res.text();
+        return JSON.parse(text);
+      } catch (e) {
+        console.warn(`API failed for ${apiUrl}, trying fallback: ${fallbackUrl}`, e);
+        const res = await fetch(fallbackUrl);
+        if (!res.ok) throw new Error('Fallback failed');
+        return await res.json();
+      }
+    }
+
+    // ── GSAP + Lenis ──────────────────────────────────────────────
+    function initAnimations() {
+      if (prefersReducedMotion) return;
+      gsap.registerPlugin(ScrollTrigger);
+      lenis = new Lenis({ lerp: 0.08, duration: 1.2, smoothWheel: true });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) gsap.globalTimeline.pause();
+        else gsap.globalTimeline.resume();
+      });
+    }
+
+
+
+    // ── Hero Animations ───────────────────────────────────────────
+    function runHeroAnimations() {
+      if (prefersReducedMotion) {
+        document.querySelectorAll('.cat-hero-overline, .cat-hero-h1, .cat-hero-overview, .cat-hero-ctas, #cat-hero-right').forEach(el => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+        return;
+      }
+      const tl = gsap.timeline({ delay: 0.2 });
+      tl.fromTo('.navbar', { y: -60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' })
+        .fromTo('.cat-hero-overline', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.1')
+        .fromTo('.cat-hero-h1', { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.2')
+        .fromTo('.cat-hero-overview', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.2')
+        .fromTo('.cat-hero-ctas', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.1')
+        .fromTo('#cat-hero-right', { x: 30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.3');
+
+      // Reveal-up elements
+      gsap.utils.toArray('.reveal-up').forEach(el => {
+        gsap.fromTo(el, { y: 40, opacity: 0 }, {
+          y: 0, opacity: 1, duration: 0.7, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 82%', once: true }
+        });
+      });
+
+      ScrollTrigger.create({
+        start: 'top -80px',
+        onUpdate: updateNavbarScroll
+      });
+      ScrollTrigger.refresh();
+    }
+
+    // ── Populate Hero ─────────────────────────────────────────────
+    function populateHero(cat, courses) {
+      document.title = `${cat.name} Programs | IMBS`;
+      document.getElementById('meta-description').setAttribute('content',
+        `${cat.overview} Browse IMBS internationally accredited ${cat.name} programs online.`
+      );
+      document.getElementById('cat-overline').textContent = `IMBS · ${(cat.name || '').toUpperCase()}`;
+      document.getElementById('cat-title').textContent = cat.name;
+      document.getElementById('cat-overview').textContent = cat.overview;
+      document.getElementById('cat-count-number').textContent = courses.length;
+
+      const catHero = document.getElementById('cat-hero');
+      if (catHero) {
+        if (cat.banner_image) {
+          catHero.style.backgroundImage = `linear-gradient(135deg, rgba(17, 29, 74, 0.88) 0%, rgba(12, 20, 53, 0.88) 100%), url('${cat.banner_image}')`;
+          catHero.style.backgroundSize = 'cover';
+          catHero.style.backgroundPosition = 'center';
+        } else {
+          catHero.style.backgroundImage = `linear-gradient(135deg, var(--deep-navy) 0%, var(--navy) 100%)`;
+        }
+      }
+
+      const benefitsList = document.getElementById('cat-benefits-list');
+      benefitsList.innerHTML = (cat.benefits || []).map(b => `
+        <li class="cat-benefit-item">
+          <div class="cat-benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span>${b}</span>
+        </li>
+      `).join('');
+    }
+
+    // ── Duration Parsing ──────────────────────────────────────────
+    function getDurationMonths(course) {
+      const dur = course.hero?.duration || '';
+      const match = dur.match(/(\d+)/);
+      if (!match) return 0;
+      const num = parseInt(match[1]);
+      if (dur.toLowerCase().includes('year')) return num * 12;
+      return num;
+    }
+
+    // ── Filter / Search ───────────────────────────────────────────
+    function getFilteredCourses() {
+      return allCourses.filter(course => {
+        // Search
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const searchable = [
+            course.title || '',
+            course.code || '',
+            course.short_name || '',
+            course.overview?.description || '',
+            ...(course.overview?.targets || []),
+            ...(course.outcomes || []),
+          ].join(' ').toLowerCase();
+          if (!searchable.includes(q)) return false;
+        }
+
+        // Mode filter (all courses are online, so just handle "online" selection)
+        if (activeFilters.mode === 'online') {
+          const mode = (course.highlights?.find(h => h.label === 'Mode')?.value || '').toLowerCase();
+          if (!mode.includes('online')) return false;
+        }
+
+        // Duration filter
+        if (activeFilters.duration) {
+          const months = getDurationMonths(course);
+          if (activeFilters.duration === 'short' && months > 6) return false;
+          if (activeFilters.duration === 'medium' && (months <= 6 || months > 18)) return false;
+          if (activeFilters.duration === 'long' && months <= 18) return false;
+        }
+
+        // Fees filter (INR)
+        if (activeFilters.fees) {
+          const amount = course.fees?.INR?.amount || 0;
+          if (activeFilters.fees === 'low' && amount >= 30000) return false;
+          if (activeFilters.fees === 'mid' && (amount < 30000 || amount >= 70000)) return false;
+          if (activeFilters.fees === 'high' && amount < 70000) return false;
+        }
+
+        return true;
+      });
+    }
+
+    // ── Render Grid ───────────────────────────────────────────────
+    function renderGrid() {
+      const filtered = getFilteredCourses();
+      const grid = document.getElementById('courses-grid');
+
+
+      if (!filtered.length) {
+        grid.innerHTML = `
+          <div class="no-results">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <h3>No Programs Found</h3>
+            <p>Try adjusting your search or filters to find the right program for you.</p>
+            <button class="btn btn-primary-red" style="margin-top:8px;" onclick="clearAllFilters()">Clear All Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map((course, i) => buildCard(course, i)).join('');
+
+      // Animate cards in
+      if (!prefersReducedMotion) {
+        gsap.fromTo('.course-card', { y: 24, opacity: 0 }, {
+          y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: 'power2.out'
+        });
+      } else {
+        document.querySelectorAll('.course-card').forEach(c => {
+          c.style.opacity = '1';
+          c.style.transform = 'none';
+        });
+      }
+    }
+
+    function buildCard(course, i) {
+      const modeValue = course.highlights?.find(h => h.label === 'Mode')?.value || '100% Online';
+      const durationValue = course.hero?.duration || course.highlights?.find(h => h.label === 'Duration')?.value || '—';
+      const eligValue = course.hero?.eligibility || course.highlights?.find(h => h.label === 'Eligibility')?.value || '—';
+      const inrFee = course.fees?.INR?.display || '—';
+      const usdFee = course.fees?.USD?.display || '';
+      return `
+        <article class="course-card" style="animation-delay:${i * 0.06}s;">
+          <div class="course-card-img-wrap">
+            ${course.featured ? '<span class="course-card-featured">Featured</span>' : ''}
+          </div>
+          <div class="course-card-body">
+            <div class="course-card-code">${course.code || ''}</div>
+            <h2 class="course-card-title">${course.title}</h2>
+            <div class="course-card-meta">
+              <div class="course-card-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span><strong>Duration:</strong> ${durationValue}</span>
+              </div>
+              <div class="course-card-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+                <span><strong>Mode:</strong> ${modeValue}</span>
+              </div>
+              <div class="course-card-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                <span><strong>Eligibility:</strong> ${eligValue}</span>
+              </div>
+            </div>
+            <div class="course-card-price">
+              ${inrFee}
+              ${usdFee ? `<span class="course-card-price-usd">/ ${usdFee}</span>` : ''}
+            </div>
+          </div>
+          <div class="course-card-footer">
+            <a href="course.html?slug=${course.slug}" class="course-card-link">
+              View Program
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            ${course.short_name ? `<span class="course-card-short">${course.short_name}</span>` : ''}
+          </div>
+        </article>
+      `;
+    }
+
+
+
+    // ── Main Load ─────────────────────────────────────────────────
+    async function loadCategory() {
+      const params = new URLSearchParams(window.location.search);
+      const categoryId = params.get('category');
+
+      try {
+        const [categories, courses] = await Promise.all([
+          safeFetchJson('api.php?action=get_categories', 'data/categories.json'),
+          safeFetchJson('api.php?action=get_courses', 'data/courses.json')
+        ]);
+
+        let cat;
+        if (categoryId) {
+          cat = categories.find(c => c.id === categoryId);
+        }
+
+        // If no category param or not found, show all courses
+        if (!cat) {
+          // Try to build a generic "All Programs" view
+          if (categoryId) {
+            showError();
+            return;
+          }
+          cat = {
+            id: 'all',
+            name: 'All Programs',
+            overview: 'Browse our complete catalog of internationally accredited online programs spanning eight professional pathways.',
+            benefits: ['Multiple Program Levels', 'International Accreditations', 'Flexible Online Learning']
+          };
+          allCourses = courses.filter(c => c.status === 'active');
+        } else {
+          allCourses = courses.filter(c => c.category === cat.id && c.status === 'active');
+        }
+
+        populateHero(cat, allCourses);
+        renderGrid();
+
+        document.getElementById('cat-main').style.display = 'block';
+        document.getElementById('page-loader').classList.add('hidden');
+
+        initAnimations();
+        runHeroAnimations();
+
+      } catch (err) {
+        showError();
+      }
+    }
+
+    function showError() {
+      document.getElementById('page-loader').classList.add('hidden');
+      document.getElementById('error-state').style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCategory();
+    });
+
+  })();
+  </script>
+  <script src="app.js?v=13"></script>
+</body>
+</html>
