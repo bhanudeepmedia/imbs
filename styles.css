@@ -1833,11 +1833,11 @@ section {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('IMBS Only Pic Logo Blue.png');
+  background-image: url('IMBS Only Pic Logo White.png');
   background-repeat: no-repeat;
   background-position: right 5% bottom 5%;
   background-size: 250px;
-  opacity: 0.03;
+  opacity: 0.07;
   pointer-events: none;
   z-index: 0;
 }
