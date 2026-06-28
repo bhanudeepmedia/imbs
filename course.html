@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" type="image/png" href="IMBS Only Pic Logo.png">
+  <link rel="icon" type="image/png" href="IMBS Only Pic Logo Blue.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" id="meta-description" content="Explore IMBS internationally accredited online programs designed for working professionals.">
   <title id="page-title">Course | IMBS</title>
@@ -1351,7 +1351,7 @@
       <div class="footer-grid">
         <div class="footer-col">
           <div class="footer-logo">
-            <img src="IMBS Only Pic Logo.png" alt="IMBS Logo" class="logo-img" style="height: 80px;width:auto;display:block;">
+            <img src="IMBS Only Pic Logo White.png" alt="IMBS Logo" class="logo-img" style="height: 80px;width:auto;display:block;">
           </div>
           <p class="footer-tagline">Ignite. Inspire. Innovate.</p>
           <div class="footer-socials">
@@ -2021,8 +2021,12 @@
         document.getElementById('course-main').style.display = 'block';
         document.getElementById('page-loader').classList.add('hidden');
 
-        initAnimations();
-        runHeroAnimations();
+        try {
+          initAnimations();
+          runHeroAnimations();
+        } catch (animErr) {
+          console.warn("Animation initialization failed:", animErr);
+        }
 
       } catch (err) {
         showError();
@@ -2031,6 +2035,7 @@
 
     function showError() {
       document.getElementById('page-loader').classList.add('hidden');
+      document.getElementById('course-main').style.display = 'none';
       document.getElementById('error-state').style.display = 'block';
     }
 
