@@ -1831,14 +1831,14 @@ section {
 .watermark-tl::before {
   content: '';
   position: absolute;
-  top: -40px;
-  left: -40px;
+  top: 24px;
+  left: 24px;
   width: 220px;
   height: 220px;
   background-image: url('IMBS Only Pic Logo White Cropped.png');
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.06;
+  opacity: 0.11;
   pointer-events: none;
   z-index: 0;
 }
@@ -1847,14 +1847,14 @@ section {
 .watermark-br::after {
   content: '';
   position: absolute;
-  bottom: -40px;
-  right: -40px;
+  bottom: 24px;
+  right: 24px;
   width: 220px;
   height: 220px;
   background-image: url('IMBS Only Pic Logo White Cropped.png');
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.06;
+  opacity: 0.11;
   pointer-events: none;
   z-index: 0;
 }
@@ -1863,14 +1863,14 @@ section {
 .watermark-bl::before {
   content: '';
   position: absolute;
-  bottom: -40px;
-  left: -40px;
+  bottom: 24px;
+  left: 24px;
   width: 220px;
   height: 220px;
   background-image: url('IMBS Only Pic Logo White Cropped.png');
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.06;
+  opacity: 0.11;
   pointer-events: none;
   z-index: 0;
 }
@@ -1879,28 +1879,28 @@ section {
 .watermark-tl-br::before {
   content: '';
   position: absolute;
-  top: -40px;
-  left: -40px;
+  top: 24px;
+  left: 24px;
   width: 220px;
   height: 220px;
   background-image: url('IMBS Only Pic Logo White Cropped.png');
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.06;
+  opacity: 0.11;
   pointer-events: none;
   z-index: 0;
 }
 .watermark-tl-br::after {
   content: '';
   position: absolute;
-  bottom: -40px;
-  right: -40px;
+  bottom: 24px;
+  right: 24px;
   width: 220px;
   height: 220px;
   background-image: url('IMBS Only Pic Logo White Cropped.png');
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.06;
+  opacity: 0.11;
   pointer-events: none;
   z-index: 0;
 }
